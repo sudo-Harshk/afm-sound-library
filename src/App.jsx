@@ -12,6 +12,7 @@ import Breadcrumb from './components/Breadcrumb';
 import DetailPanel from './components/DetailPanel';
 import { searchSounds } from './lib/refs';
 import { useTheme } from './lib/useTheme';
+import { useSidebarWidth } from './lib/useSidebarWidth';
 
 const SECTION_ORDER = [
   'Human vocal and speech sounds',
@@ -48,6 +49,7 @@ export default function App() {
   const [activeCategory, setActiveCategory] = useState(null);
   const [selectedSound, setSelectedSound] = useState(null);
   const { theme, toggle: toggleTheme } = useTheme();
+  const { width: sidebarWidth, isDragging: isSidebarDragging, startDrag: startSidebarDrag, resetWidth: resetSidebarWidth } = useSidebarWidth();
 
   useEffect(() => {
     const unsubscribe = onSnapshot(
@@ -119,6 +121,10 @@ export default function App() {
         onSelectCategory={setActiveCategory}
         theme={theme}
         onToggleTheme={toggleTheme}
+        width={sidebarWidth}
+        isDragging={isSidebarDragging}
+        onStartDrag={startSidebarDrag}
+        onResetWidth={resetSidebarWidth}
       />
 
       {/* Mobile layout */}
@@ -153,7 +159,10 @@ export default function App() {
       </div>
 
       {/* Desktop layout */}
-      <div className="hidden lg:flex lg:flex-col lg:min-h-screen lg:ml-[240px]">
+      <div
+        className={`hidden lg:flex lg:flex-col lg:min-h-screen ${isSidebarDragging ? '' : 'transition-[margin-left] duration-100'}`}
+        style={{ marginLeft: sidebarWidth }}
+      >
         <TopBar query={query} onQueryChange={setQuery} />
         <main className="flex-1 overflow-y-auto p-6">
             <Breadcrumb

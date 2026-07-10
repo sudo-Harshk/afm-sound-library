@@ -1,10 +1,23 @@
 import { getCategoryIcon } from '../lib/icons';
 
-export default function Sidebar({ categories, activeCategory, onSelectCategory, theme, onToggleTheme }) {
+export default function Sidebar({
+  categories,
+  activeCategory,
+  onSelectCategory,
+  theme,
+  onToggleTheme,
+  width,
+  isDragging,
+  onStartDrag,
+  onResetWidth,
+}) {
   const totalSounds = categories.reduce((sum, c) => sum + c.count, 0);
 
   return (
-    <aside className="hidden lg:flex fixed left-0 top-0 h-screen w-[240px] flex-col border-r border-line bg-paper z-50">
+    <aside
+      className="hidden lg:flex fixed left-0 top-0 h-screen flex-col border-r border-line bg-paper z-50"
+      style={{ width }}
+    >
       <div className="p-6">
         <h1 className="text-[18px] font-semibold text-ink tracking-tight">AFM Sound Catalog</h1>
         <p className="text-[13px] text-ink-soft mt-1 opacity-70">Sound Taxonomy Reference</p>
@@ -39,9 +52,9 @@ export default function Sidebar({ categories, activeCategory, onSelectCategory, 
                   : 'text-ink-soft hover:bg-surface-container-high border-l-2 border-transparent'
               }`}
             >
-              <span className="material-symbols-outlined text-[18px]">{icon}</span>
-              <span className="flex-1 min-w-0 text-left truncate">{name}</span>
-              <span className="text-[11px] text-ink-faint tabular-nums">{count}</span>
+              <span className="material-symbols-outlined text-[18px] shrink-0">{icon}</span>
+              <span className="flex-1 min-w-0 text-left">{name}</span>
+              <span className="text-[11px] text-ink-faint tabular-nums shrink-0">{count}</span>
             </button>
           );
         })}
@@ -57,6 +70,15 @@ export default function Sidebar({ categories, activeCategory, onSelectCategory, 
           </span>
           Theme
         </button>
+      </div>
+
+      <div
+        onMouseDown={onStartDrag}
+        onDoubleClick={onResetWidth}
+        title="Drag to resize · double-click to reset"
+        className={`absolute top-0 right-0 h-full w-1 cursor-col-resize group ${isDragging ? 'bg-accent' : 'hover:bg-accent/50'}`}
+      >
+        <div className={`absolute inset-y-0 -right-1 w-3 ${isDragging ? '' : 'group-hover:bg-accent/10'}`} />
       </div>
     </aside>
   );
