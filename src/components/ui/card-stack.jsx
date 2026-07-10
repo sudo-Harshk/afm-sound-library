@@ -2,11 +2,12 @@ import { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 import { motion, useMotionValue, useTransform, AnimatePresence } from 'framer-motion';
 
 const CardStack = forwardRef(function CardStack(
-  { items, keyField = 'id', renderItem, onFrontChange, cardHeight = 340, maxVisible = 5 },
+  { items, keyField = 'id', renderItem, onFrontChange, aspectRatio = '4 / 5', maxVisible = 5 },
   ref
 ) {
   const [cards, setCards] = useState(items);
   const [dragDirection, setDragDirection] = useState(null);
+  const [dragLocked, setDragLocked] = useState(false);
   const dragY = useMotionValue(0);
   const rotateX = useTransform(dragY, [-200, 0, 200], [10, 0, -10]);
 
@@ -16,6 +17,7 @@ const CardStack = forwardRef(function CardStack(
 
   useEffect(() => {
     if (cards.length) onFrontChange?.(cards[0], items.indexOf(cards[0]));
+    setDragLocked(false);
   }, [cards]);
 
   const offset = 14;
@@ -47,18 +49,19 @@ const CardStack = forwardRef(function CardStack(
   if (cards.length === 0) return null;
 
   return (
-    <ul className="relative w-full m-0 p-0" style={{ height: cardHeight }}>
+    <ul className="relative w-full m-0 p-0" style={{ aspectRatio }}>
       <AnimatePresence>
         {cards.slice(0, maxVisible).map((item, i) => {
           const isFront = i === 0;
+          const canDrag = isFront && !dragLocked;
           const brightness = Math.max(0.6, 1 - i * dimStep);
           return (
             <motion.li
               key={item[keyField]}
               className="absolute inset-0 list-none"
               style={{
-                cursor: isFront ? 'grab' : 'auto',
-                touchAction: 'none',
+                cursor: canDrag ? 'grab' : 'auto',
+                touchAction: canDrag ? 'none' : 'auto',
                 rotateX: isFront ? rotateX : 0,
                 transformPerspective: 1000,
               }}
@@ -71,14 +74,14 @@ const CardStack = forwardRef(function CardStack(
               }}
               exit={{ opacity: 0, scale: 0.85, transition: { duration: 0.15 } }}
               transition={spring}
-              drag={isFront ? 'y' : false}
+              drag={canDrag ? 'y' : false}
               dragConstraints={{ top: 0, bottom: 0 }}
               dragElastic={0.6}
-              onDrag={(_, info) => isFront && dragY.set(info.offset.y)}
+              onDrag={(_, info) => canDrag && dragY.set(info.offset.y)}
               onDragEnd={handleDragEnd}
-              whileDrag={isFront ? { zIndex: cards.length + 1, cursor: 'grabbing', scale: 1.02 } : {}}
+              whileDrag={canDrag ? { zIndex: cards.length + 1, cursor: 'grabbing', scale: 1.02 } : {}}
             >
-              {renderItem(item, isFront)}
+              {renderItem(item, isFront, setDragLocked)}
             </motion.li>
           );
         })}

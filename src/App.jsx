@@ -6,7 +6,8 @@ import CategoryList from './components/CategoryList';
 import LabelList from './components/LabelList';
 import CategoryDetail from './components/CategoryDetail';
 import { searchSounds } from './lib/refs';
-import { AudioLines, Loader2 } from 'lucide-react';
+import { useTheme } from './lib/useTheme';
+import { AudioLines, Loader2, Sun, Moon } from 'lucide-react';
 
 const SECTION_ORDER = [
   'Human vocal and speech sounds',
@@ -41,6 +42,7 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState(getInitialQuery);
   const [activeCategory, setActiveCategory] = useState(null);
+  const { theme, toggle: toggleTheme } = useTheme();
 
   useEffect(() => {
     const unsubscribe = onSnapshot(
@@ -106,18 +108,28 @@ export default function App() {
   return (
     <div className="min-h-screen bg-paper">
       <header className="border-b border-line bg-paper-raised">
-        <div className="max-w-3xl mx-auto px-6 py-4 flex items-center gap-2.5">
-          <div className="w-7 h-7 rounded-lg bg-accent-soft flex items-center justify-center shrink-0">
-            <AudioLines className="w-4 h-4 text-accent" strokeWidth={1.75} />
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 py-3.5 sm:py-4 flex items-center justify-between gap-2.5">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="w-7 h-7 rounded-lg bg-accent-soft flex items-center justify-center shrink-0">
+              <AudioLines className="w-4 h-4 text-accent" strokeWidth={1.75} />
+            </div>
+            <span className="text-[14px] font-semibold text-ink tracking-tight truncate">AFM Sound Catalog</span>
           </div>
-          <span className="text-[14px] font-semibold text-ink tracking-tight">AFM Sound Catalog</span>
+          <button
+            onClick={toggleTheme}
+            title={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
+            aria-label="Toggle theme"
+            className="shrink-0 w-9 h-9 rounded-full border border-line bg-paper flex items-center justify-center text-ink-soft hover:text-accent hover:border-accent/50 transition-colors duration-150"
+          >
+            {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+          </button>
         </div>
       </header>
 
-      <main className="max-w-3xl mx-auto px-6 py-10 sm:py-14">
+      <main className="max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-14">
         <SearchBar query={query} onQueryChange={setQuery} />
 
-        <div className="mt-8">
+        <div className="mt-6 sm:mt-8">
           {isSearching ? (
             <LabelList sounds={searchResults} onAddReference={handleAddReference} />
           ) : activeCategory ? (

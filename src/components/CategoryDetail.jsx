@@ -27,25 +27,25 @@ export default function CategoryDetail({ category, sounds, onBack, onAddReferenc
   return (
     <div>
       <BackButton onBack={onBack} />
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-semibold text-ink">{category}</h2>
-        <span className="text-xs font-medium text-ink-faint tabular-nums bg-paper-raised border border-line px-2.5 py-1 rounded-full">
+      <div className="flex items-center justify-between mb-5 sm:mb-6">
+        <h2 className="text-lg sm:text-xl font-semibold text-ink truncate pr-3">{category}</h2>
+        <span className="shrink-0 text-xs font-medium text-ink-faint tabular-nums bg-paper-raised border border-line px-2.5 py-1 rounded-full">
           {index + 1} / {total}
         </span>
       </div>
 
-      <div className="w-full max-w-sm mx-auto">
+      <div className="w-full max-w-[300px] sm:max-w-sm mx-auto">
         <CardStack
           ref={stackRef}
           items={sounds}
-          cardHeight={340}
+          aspectRatio="4 / 5"
           onFrontChange={(_, idx) => setIndex(idx)}
-          renderItem={(sound, isFront) => (
-            <SoundCardFace sound={sound} isFront={isFront} onAddReference={onAddReference} />
+          renderItem={(sound, isFront, setDragLocked) => (
+            <SoundCardFace sound={sound} isFront={isFront} onAddReference={onAddReference} onLockDrag={setDragLocked} />
           )}
         />
 
-        <div className="flex items-center justify-center gap-3 mt-8">
+        <div className="flex items-center justify-center gap-3 mt-6 sm:mt-8">
           <ControlButton onClick={prev} title="Previous">
             <ChevronLeft className="w-4 h-4" />
           </ControlButton>
