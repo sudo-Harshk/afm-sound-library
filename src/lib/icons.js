@@ -1,36 +1,30 @@
-import {
-  MessageCircle, Wind, Utensils, Baby, PawPrint, Droplet, Users, Trees,
-  Zap, Waves, CircleDot, Cog, Radio, Music, ChefHat, Car, Hammer,
-  GitCompare, Volume1, BookOpen, Volume2,
-} from 'lucide-react';
-
 const RULES = [
-  [/vocal|speech/i, MessageCircle],
-  [/respiratory|breathing/i, Wind],
-  [/digestive|body|contact/i, Utensils],
-  [/baby|infant/i, Baby],
-  [/animal/i, PawPrint],
-  [/liquid|fluid/i, Droplet],
-  [/crowd|social/i, Users],
-  [/nature|environmental/i, Trees],
-  [/impact|collision/i, Zap],
-  [/friction|texture/i, Waves],
-  [/metallic|resonant/i, CircleDot],
-  [/mechanical|appliance|industrial/i, Cog],
-  [/air|pressure/i, Wind],
-  [/electronic|alert|interface/i, Radio],
-  [/music|tonal/i, Music],
-  [/food|cooking/i, ChefHat],
-  [/transport|vehicle/i, Car],
-  [/construction|tool/i, Hammer],
-  [/confusable/i, GitCompare],
-  [/background|silence|ambience/i, Volume1],
-  [/guideline|quality/i, BookOpen],
+  [/vocal|speech/i, 'record_voice_over'],
+  [/respiratory|breathing/i, 'air'],
+  [/digestive|body|contact/i, 'accessibility_new'],
+  [/baby|infant/i, 'child_care'],
+  [/animal/i, 'pets'],
+  [/liquid|fluid/i, 'water_drop'],
+  [/crowd|social/i, 'groups'],
+  [/nature|environmental/i, 'forest'],
+  [/impact|collision/i, 'bolt'],
+  [/friction|texture/i, 'texture'],
+  [/metallic|resonant/i, 'graphic_eq'],
+  [/mechanical|appliance|industrial/i, 'settings'],
+  [/air|pressure/i, 'compress'],
+  [/electronic|alert|interface/i, 'notifications'],
+  [/music|tonal/i, 'music_note'],
+  [/food|cooking/i, 'restaurant'],
+  [/transport|vehicle/i, 'directions_car'],
+  [/construction|tool/i, 'construction'],
+  [/confusable/i, 'compare'],
+  [/background|silence|ambience/i, 'volume_down'],
+  [/guideline|quality/i, 'menu_book'],
 ];
 
 export function getCategoryIcon(name) {
-  for (const [pattern, Icon] of RULES) {
-    if (pattern.test(name)) return Icon;
+  for (const [pattern, icon] of RULES) {
+    if (pattern.test(name)) return icon;
   }
-  return Volume2;
+  return 'volume_up';
 }

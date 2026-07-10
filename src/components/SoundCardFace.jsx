@@ -81,7 +81,7 @@ export default function SoundCardFace({ sound, isFront, onAddReference, onLockDr
     <div className="relative w-full h-full rounded-2xl border border-line shadow-[var(--shadow-card)] overflow-hidden select-none bg-gradient-to-br from-accent-soft to-paper-raised">
       {/* Poster artwork */}
       <div className="absolute inset-0 flex items-center justify-center">
-        <Icon className="w-32 h-32 text-accent/20" strokeWidth={1} />
+        <span className="material-symbols-outlined text-accent/20" style={{ fontSize: '128px' }}>{Icon}</span>
       </div>
 
       {playingYtId && (

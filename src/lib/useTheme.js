@@ -16,14 +16,18 @@ export function useTheme() {
   }, []);
 
   useEffect(() => {
+    const resolved = override || systemTheme;
+    if (resolved === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
     if (override) {
-      document.documentElement.setAttribute('data-theme', override);
       localStorage.setItem('theme', override);
     } else {
-      document.documentElement.removeAttribute('data-theme');
       localStorage.removeItem('theme');
     }
-  }, [override]);
+  }, [override, systemTheme]);
 
   const resolvedTheme = override || systemTheme;
 

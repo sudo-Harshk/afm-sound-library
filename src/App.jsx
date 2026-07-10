@@ -5,9 +5,13 @@ import SearchBar from './components/SearchBar';
 import CategoryList from './components/CategoryList';
 import LabelList from './components/LabelList';
 import CategoryDetail from './components/CategoryDetail';
+import Sidebar from './components/Sidebar';
+import TopBar from './components/TopBar';
+import DataTable from './components/DataTable';
+import Breadcrumb from './components/Breadcrumb';
+import DetailPanel from './components/DetailPanel';
 import { searchSounds } from './lib/refs';
 import { useTheme } from './lib/useTheme';
-import { AudioLines, Loader2, Sun, Moon } from 'lucide-react';
 
 const SECTION_ORDER = [
   'Human vocal and speech sounds',
@@ -42,6 +46,7 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState(getInitialQuery);
   const [activeCategory, setActiveCategory] = useState(null);
+  const [selectedSound, setSelectedSound] = useState(null);
   const { theme, toggle: toggleTheme } = useTheme();
 
   useEffect(() => {
@@ -98,7 +103,7 @@ export default function App() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-paper">
-        <Loader2 className="w-6 h-6 text-ink-faint animate-spin" />
+        <div className="w-6 h-6 border-2 border-ink-faint border-t-accent rounded-full animate-spin" />
       </div>
     );
   }
@@ -107,46 +112,112 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-paper">
-      <header className="border-b border-line bg-paper-raised">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 py-3.5 sm:py-4 flex items-center justify-between gap-2.5">
-          <div className="flex items-center gap-2.5 min-w-0">
-            <div className="w-7 h-7 rounded-lg bg-accent-soft flex items-center justify-center shrink-0">
-              <AudioLines className="w-4 h-4 text-accent" strokeWidth={1.75} />
+      {/* Desktop sidebar */}
+      <Sidebar
+        categories={categories}
+        activeCategory={activeCategory}
+        onSelectCategory={setActiveCategory}
+        theme={theme}
+        onToggleTheme={toggleTheme}
+      />
+
+      {/* Mobile layout */}
+      <div className="lg:hidden">
+        <header className="border-b border-line bg-paper-raised">
+          <div className="max-w-3xl mx-auto px-4 sm:px-6 py-3.5 sm:py-4 flex items-center justify-between gap-2.5">
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div className="w-7 h-7 rounded-lg bg-accent-soft flex items-center justify-center shrink-0">
+                <span className="material-symbols-outlined text-accent text-[16px]">graphic_eq</span>
+              </div>
+              <span className="text-[14px] font-semibold text-ink tracking-tight truncate">AFM Sound Catalog</span>
             </div>
-            <span className="text-[14px] font-semibold text-ink tracking-tight truncate">AFM Sound Catalog</span>
+            <button
+              onClick={toggleTheme}
+              title={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
+              aria-label="Toggle theme"
+              className="shrink-0 w-9 h-9 rounded-full border border-line bg-paper flex items-center justify-center text-ink-soft hover:text-accent hover:border-accent/50 transition-colors duration-150"
+            >
+              <span className="material-symbols-outlined text-[16px]">
+                {theme === 'dark' ? 'light_mode' : 'dark_mode'}
+              </span>
+            </button>
           </div>
-          <button
-            onClick={toggleTheme}
-            title={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
-            aria-label="Toggle theme"
-            className="shrink-0 w-9 h-9 rounded-full border border-line bg-paper flex items-center justify-center text-ink-soft hover:text-accent hover:border-accent/50 transition-colors duration-150"
-          >
-            {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-          </button>
-        </div>
-      </header>
+        </header>
 
-      <main className="max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-14">
-        <SearchBar query={query} onQueryChange={setQuery} />
+        <main className="max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-14">
+          <SearchBar query={query} onQueryChange={setQuery} />
+          <div className="mt-6 sm:mt-8">
+            {renderContent(isSearching, searchResults, activeCategory, categorySounds, categories, setActiveCategory, handleAddReference)}
+          </div>
+        </main>
+      </div>
 
-        <div className="mt-6 sm:mt-8">
-          {isSearching ? (
-            <LabelList sounds={searchResults} onAddReference={handleAddReference} />
-          ) : activeCategory ? (
-            <CategoryDetail
-              category={activeCategory}
-              sounds={categorySounds}
-              onBack={() => setActiveCategory(null)}
-              onAddReference={handleAddReference}
+      {/* Desktop layout */}
+      <div className="hidden lg:flex lg:flex-col lg:min-h-screen lg:ml-[240px]">
+        <TopBar query={query} onQueryChange={setQuery} />
+        <main className="flex-1 overflow-y-auto p-6">
+            <Breadcrumb
+              items={[
+                { label: 'All Categories', onClick: () => setActiveCategory(null) },
+                ...(activeCategory ? [{ label: activeCategory }] : []),
+                ...(isSearching ? [{ label: `Search: ${query}` }] : []),
+              ]}
             />
-          ) : (
-            <>
-              <h2 className="text-xs font-semibold uppercase tracking-wider text-ink-faint mb-3">Browse by category</h2>
-              <CategoryList categories={categories} onSelect={setActiveCategory} />
-            </>
-          )}
-        </div>
-      </main>
+            <div className="mb-6 flex items-end justify-between">
+              <div>
+                <h2 className="text-[24px] font-semibold text-ink leading-tight tracking-tight">
+                  {isSearching
+                    ? <>Search: &lsquo;{query}&rsquo;</>
+                    : activeCategory
+                      ? activeCategory
+                      : 'Sound Catalog'}
+                </h2>
+                <p className="text-[14px] text-ink-soft mt-1">
+                  {isSearching
+                    ? `${searchResults.length} result${searchResults.length !== 1 ? 's' : ''} found`
+                    : activeCategory
+                      ? `${categorySounds.length} label${categorySounds.length !== 1 ? 's' : ''}`
+                      : `${sounds.length} total labels across ${categories.length} categories`}
+                </p>
+              </div>
+            </div>
+            <DataTable
+              sounds={isSearching ? searchResults : activeCategory ? categorySounds : sounds}
+              onRowClick={(sound) => setSelectedSound(sound)}
+            />
+        </main>
+      </div>
+
+      {/* Detail panel */}
+      {selectedSound && (
+        <DetailPanel
+          sound={selectedSound}
+          onClose={() => setSelectedSound(null)}
+          onAddReference={handleAddReference}
+        />
+      )}
     </div>
+  );
+}
+
+function renderContent(isSearching, searchResults, activeCategory, categorySounds, categories, setActiveCategory, handleAddReference) {
+  if (isSearching) {
+    return <LabelList sounds={searchResults} onAddReference={handleAddReference} />;
+  }
+  if (activeCategory) {
+    return (
+      <CategoryDetail
+        category={activeCategory}
+        sounds={categorySounds}
+        onBack={() => setActiveCategory(null)}
+        onAddReference={handleAddReference}
+      />
+    );
+  }
+  return (
+    <>
+      <h2 className="text-xs font-semibold uppercase tracking-wider text-ink-faint mb-3 lg:hidden">Browse by category</h2>
+      <CategoryList categories={categories} onSelect={setActiveCategory} />
+    </>
   );
 }
