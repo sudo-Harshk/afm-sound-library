@@ -8,12 +8,33 @@ const COLUMNS = [
   { key: 'action', label: '', sortable: false },
 ];
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE_OPTIONS = [10, 25, 50, 100];
+const DEFAULT_PAGE_SIZE = 25;
+const ELLIPSIS = '…';
+
+function getPageItems(page, totalPages) {
+  const SIBLINGS = 1;
+  if (totalPages <= 7) {
+    return Array.from({ length: totalPages }, (_, i) => i);
+  }
+
+  const items = [0];
+  const start = Math.max(1, page - SIBLINGS);
+  const end = Math.min(totalPages - 2, page + SIBLINGS);
+
+  if (start > 1) items.push(ELLIPSIS);
+  for (let i = start; i <= end; i++) items.push(i);
+  if (end < totalPages - 2) items.push(ELLIPSIS);
+
+  items.push(totalPages - 1);
+  return items;
+}
 
 export default function DataTable({ sounds, onRowClick }) {
   const [sortKey, setSortKey] = useState('canonicalLabel');
   const [sortDir, setSortDir] = useState('asc');
   const [page, setPage] = useState(0);
+  const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
 
   const handleSort = (key) => {
     if (!key) return;
@@ -40,8 +61,16 @@ export default function DataTable({ sounds, onRowClick }) {
     return 0;
   });
 
-  const totalPages = Math.ceil(sorted.length / PAGE_SIZE);
-  const paged = sorted.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+  const totalPages = Math.ceil(sorted.length / pageSize);
+  const paged = sorted.slice(page * pageSize, (page + 1) * pageSize);
+
+  const handlePageSizeChange = (size) => {
+    setPageSize(size);
+    setPage(0);
+  };
+
+  const pageItems = getPageItems(page, totalPages);
+  const fillerCount = totalPages > 1 ? pageSize - paged.length : 0;
 
   return (
     <div>
@@ -91,6 +120,12 @@ export default function DataTable({ sounds, onRowClick }) {
                 </td>
               </tr>
             ))}
+            {fillerCount > 0 &&
+              Array.from({ length: fillerCount }, (_, i) => (
+                <tr key={`filler-${i}`} aria-hidden="true" style={{ borderColor: 'transparent' }}>
+                  <td className="px-6 py-4" colSpan={5}>&nbsp;</td>
+                </tr>
+              ))}
             {paged.length === 0 && (
               <tr>
                 <td colSpan={5} className="px-6 py-12 text-center text-[13px] text-ink-faint">
@@ -102,35 +137,70 @@ export default function DataTable({ sounds, onRowClick }) {
         </table>
 
         {sorted.length > 0 && (
-          <div className="px-6 py-3 bg-surface-container-low flex items-center justify-between border-t border-line">
-            <span className="text-[13px] text-ink-faint">
-              Showing {page * PAGE_SIZE + 1}–{Math.min((page + 1) * PAGE_SIZE, sorted.length)} of {sorted.length} results
-            </span>
-            <div className="flex items-center gap-1">
+          <div className="px-6 py-4 bg-surface-container-low border-t border-line flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="flex items-center gap-3 order-2 sm:order-1">
+              <span className="text-[12px] text-ink-faint whitespace-nowrap">
+                <span className="text-ink font-semibold tabular-nums">{page * pageSize + 1}–{Math.min((page + 1) * pageSize, sorted.length)}</span>
+                {' '}of{' '}
+                <span className="tabular-nums">{sorted.length}</span>
+              </span>
+
+              <div className="h-4 w-px bg-line" />
+
+              <div className="inline-flex items-center gap-0.5 p-0.5 rounded-full bg-surface-container-high">
+                {PAGE_SIZE_OPTIONS.map((size) => (
+                  <button
+                    key={size}
+                    onClick={() => handlePageSizeChange(size)}
+                    aria-current={size === pageSize ? 'true' : undefined}
+                    className={`px-2.5 h-6 rounded-full text-[11px] font-semibold tabular-nums transition-colors ${
+                      size === pageSize
+                        ? 'bg-accent text-on-primary shadow-sm'
+                        : 'text-ink-faint hover:text-ink'
+                    }`}
+                  >
+                    {size}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex items-center gap-1 order-1 sm:order-2 self-end sm:self-auto">
               <button
                 onClick={() => setPage(Math.max(0, page - 1))}
                 disabled={page === 0}
-                className="p-1 rounded hover:bg-surface-container-high disabled:opacity-30 transition-colors"
+                aria-label="Previous page"
+                className="w-8 h-8 flex items-center justify-center rounded-full text-ink-soft hover:bg-surface-container-high hover:text-ink disabled:opacity-30 disabled:hover:bg-transparent transition-colors"
               >
                 <span className="material-symbols-outlined text-[18px]">chevron_left</span>
               </button>
-              {Array.from({ length: totalPages }, (_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setPage(i)}
-                  className={`px-3 py-1 rounded text-[12px] font-medium transition-colors ${
-                    i === page
-                      ? 'bg-accent text-on-primary'
-                      : 'hover:bg-surface-container-high text-ink-soft'
-                  }`}
-                >
-                  {i + 1}
-                </button>
-              ))}
+              <div className="flex items-center gap-0.5">
+                {pageItems.map((item, idx) =>
+                  item === ELLIPSIS ? (
+                    <span key={`ellipsis-${idx}`} className="w-8 text-center text-[12px] text-ink-faint select-none">
+                      ⋯
+                    </span>
+                  ) : (
+                    <button
+                      key={item}
+                      onClick={() => setPage(item)}
+                      aria-current={item === page ? 'page' : undefined}
+                      className={`w-8 h-8 rounded-full text-[12px] font-semibold tabular-nums transition-colors ${
+                        item === page
+                          ? 'bg-accent text-on-primary shadow-sm'
+                          : 'text-ink-soft hover:bg-surface-container-high hover:text-ink'
+                      }`}
+                    >
+                      {item + 1}
+                    </button>
+                  )
+                )}
+              </div>
               <button
                 onClick={() => setPage(Math.min(totalPages - 1, page + 1))}
                 disabled={page >= totalPages - 1}
-                className="p-1 rounded hover:bg-surface-container-high disabled:opacity-30 transition-colors"
+                aria-label="Next page"
+                className="w-8 h-8 flex items-center justify-center rounded-full text-ink-soft hover:bg-surface-container-high hover:text-ink disabled:opacity-30 disabled:hover:bg-transparent transition-colors"
               >
                 <span className="material-symbols-outlined text-[18px]">chevron_right</span>
               </button>
