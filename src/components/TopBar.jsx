@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 
-export default function TopBar({ query, onQueryChange }) {
+export default function TopBar({ query, onQueryChange, totalSounds, totalCategories }) {
   const inputRef = useRef(null);
 
   useEffect(() => {
@@ -33,6 +33,21 @@ export default function TopBar({ query, onQueryChange }) {
           <span className="px-1.5 py-0.5 rounded border border-line text-[11px] text-ink-faint font-mono">K</span>
         </div>
       </div>
+
+      {(totalSounds != null || totalCategories != null) && (
+        <div className="ml-4 flex items-center gap-2 pl-4 border-l border-line shrink-0">
+          <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-surface-container text-[12px] text-ink-soft">
+            <span className="material-symbols-outlined text-[16px] text-ink-faint">graphic_eq</span>
+            <span className="font-semibold text-ink tabular-nums">{totalSounds}</span>
+            <span className="text-ink-faint">labels</span>
+          </div>
+          <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-surface-container text-[12px] text-ink-soft">
+            <span className="material-symbols-outlined text-[16px] text-ink-faint">category</span>
+            <span className="font-semibold text-ink tabular-nums">{totalCategories}</span>
+            <span className="text-ink-faint">categories</span>
+          </div>
+        </div>
+      )}
     </header>
   );
 }

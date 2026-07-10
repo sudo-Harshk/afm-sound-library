@@ -163,7 +163,7 @@ export default function App() {
         className={`hidden lg:flex lg:flex-col lg:min-h-screen ${isSidebarDragging ? '' : 'transition-[margin-left] duration-100'}`}
         style={{ marginLeft: sidebarWidth }}
       >
-        <TopBar query={query} onQueryChange={setQuery} />
+        <TopBar query={query} onQueryChange={setQuery} totalSounds={sounds.length} totalCategories={categories.length} />
         <main className="flex-1 overflow-y-auto p-6">
             <Breadcrumb
               items={[
