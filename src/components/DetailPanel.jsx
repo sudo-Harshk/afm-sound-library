@@ -164,6 +164,7 @@ export default function DetailPanel({ sound, onClose, onAddReference }) {
             <div className="pt-4 border-t border-line">
               {adding ? (
                 <form onSubmit={submitReference} className="space-y-2">
+                  <p className="text-[12px] text-ink-faint">Only YouTube or Pixabay links can be added.</p>
                   <input
                     type="text"
                     value={url}

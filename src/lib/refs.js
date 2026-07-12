@@ -1,7 +1,4 @@
-export const ALLOWED_DOMAINS = [
-  'youtube.com', 'youtu.be', 'pixabay.com', 'freesound.org',
-  'audio.com', 'soundcloud.com', 'instagram.com',
-];
+export const ALLOWED_DOMAINS = ['youtube.com', 'youtu.be', 'pixabay.com'];
 
 export function getYouTubeId(url) {
   if (!url) return null;
@@ -21,10 +18,6 @@ export function getDomainName(url) {
   const domain = getDomain(url);
   if (domain.includes('youtube') || domain.includes('youtu.be')) return 'YouTube';
   if (domain.includes('pixabay')) return 'Pixabay';
-  if (domain.includes('freesound')) return 'Freesound';
-  if (domain.includes('audio.com')) return 'Audio.com';
-  if (domain.includes('soundcloud')) return 'SoundCloud';
-  if (domain.includes('instagram')) return 'Instagram';
   return domain;
 }
 
