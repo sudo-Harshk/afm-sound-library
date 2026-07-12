@@ -1,11 +1,9 @@
 import { useState } from 'react';
 
 const COLUMNS = [
-  { key: 'canonicalLabel', label: 'Label Name', sortable: true },
+  { key: 'canonicalLabel', label: 'Canonical Label', sortable: true },
   { key: 'subcategory', label: 'Subcategory', sortable: true },
-  { key: 'section', label: 'Category', sortable: true },
-  { key: 'referenceCount', label: 'Reference Count', sortable: true },
-  { key: 'action', label: '', sortable: false },
+  { key: 'description', label: 'Description', sortable: false },
 ];
 
 const PAGE_SIZE_OPTIONS = [10, 25, 50, 100];
@@ -48,14 +46,8 @@ export default function DataTable({ sounds, onRowClick }) {
   };
 
   const sorted = [...sounds].sort((a, b) => {
-    let aVal, bVal;
-    if (sortKey === 'referenceCount') {
-      aVal = (a.references || []).length;
-      bVal = (b.references || []).length;
-    } else {
-      aVal = (a[sortKey] || '').toLowerCase();
-      bVal = (b[sortKey] || '').toLowerCase();
-    }
+    const aVal = (a[sortKey] || '').toLowerCase();
+    const bVal = (b[sortKey] || '').toLowerCase();
     if (aVal < bVal) return sortDir === 'asc' ? -1 : 1;
     if (aVal > bVal) return sortDir === 'asc' ? 1 : -1;
     return 0;
@@ -103,32 +95,22 @@ export default function DataTable({ sounds, onRowClick }) {
               <tr
                 key={sound.id}
                 onClick={() => onRowClick?.(sound)}
-                className="group hover:bg-surface-container-low transition-colors cursor-pointer"
+                className="hover:bg-surface-container-low transition-colors cursor-pointer"
               >
                 <td className="px-6 py-4 text-[13px] font-semibold text-ink">{sound.canonicalLabel}</td>
                 <td className="px-6 py-4 text-[13px] text-ink-soft">{sound.subcategory || '—'}</td>
-                <td className="px-6 py-4">
-                  <span className="inline-flex items-center px-2 py-1 bg-accent-soft/40 text-accent border border-accent-soft rounded text-[11px] font-medium">
-                    {sound.section}
-                  </span>
-                </td>
-                <td className="px-6 py-4 text-[13px] font-mono text-ink">{(sound.references || []).length}</td>
-                <td className="px-6 py-4 text-right">
-                  <span className="material-symbols-outlined text-[18px] text-ink-faint group-hover:text-accent transition-colors">
-                    open_in_new
-                  </span>
-                </td>
+                <td className="px-6 py-4 text-[13px] text-ink-soft max-w-[420px] truncate">{sound.description || '—'}</td>
               </tr>
             ))}
             {fillerCount > 0 &&
               Array.from({ length: fillerCount }, (_, i) => (
                 <tr key={`filler-${i}`} aria-hidden="true" style={{ borderColor: 'transparent' }}>
-                  <td className="px-6 py-4" colSpan={5}>&nbsp;</td>
+                  <td className="px-6 py-4" colSpan={3}>&nbsp;</td>
                 </tr>
               ))}
             {paged.length === 0 && (
               <tr>
-                <td colSpan={5} className="px-6 py-12 text-center text-[13px] text-ink-faint">
+                <td colSpan={3} className="px-6 py-12 text-center text-[13px] text-ink-faint">
                   No sounds found.
                 </td>
               </tr>

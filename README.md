@@ -8,11 +8,11 @@ Repository: https://github.com/sudo-Harshk/afm-sound-library
 
 ## Overview
 
-The catalog covers 21 sound categories (human, animal, environmental, mechanical, impact, and other groups) with hundreds of individual canonical labels, each carrying zero or more reference links (YouTube, Pixabay, Freesound, Audio.com, SoundCloud, Instagram). Data is stored in Firestore and read live by the app; there is no build-time data bundling.
+The catalog covers 18 sound categories (human, animal, environmental, mechanical, impact, and other groups) with 203 canonical labels total, each carrying zero or more reference links (YouTube, Pixabay, Freesound, Audio.com, SoundCloud, Instagram). This label set is an exact match to the canonical sound taxonomy reference document — no extra or missing labels. Data is stored in Firestore and read live by the app; there is no build-time data bundling.
 
 The app renders two distinct layouts from the same state, split at the Tailwind `lg` breakpoint:
 
-- **Desktop** (`lg` and up): a fixed, drag-to-resize sidebar (200–480px, persisted to `localStorage`) lists categories with live counts; a sticky top bar holds search plus "N labels / N categories" stat chips; the main area is a sortable, paginated data table (10/25/50/100 rows per page, with a page window like `1 … 4 5 6 … 10` for large result sets). Clicking a row opens a slide-in detail panel with metadata, taxonomy path, and reference links.
+- **Desktop** (`lg` and up): a fixed, drag-to-resize sidebar (200–480px, persisted to `localStorage`) lists categories with live counts; a sticky top bar holds search plus "N labels / N categories" stat chips; the main area is a sortable, paginated data table (10/25/50/100 rows per page, with a page window like `1 … 4 5 6 … 10` for large result sets) showing Canonical Label, Subcategory, and Description. Clicking a row opens a slide-in detail panel with the YouTube preview (if a reference is set), a metadata block (typical example, acoustic profile, confusable labels), the full taxonomy path, and the reference link list.
 - **Mobile** (below `lg`): a simpler stacked layout — search bar up top, then either a grid of category tiles or, once a category/search is active, results as a flat list (`LabelList`/`LabelRow`) or a draggable stack of cards (`CategoryDetail` + `card-stack.jsx`, drag up/down or use on-screen controls).
 
 Search does instant letter-by-letter filtering as you type, and the query is reflected in the URL (`?q=...`) so a search is shareable and survives a page refresh.
@@ -60,6 +60,10 @@ src/
     icons.js                      keyword-to-icon mapping for categories (Material Symbols names)
     useTheme.js                   light/dark theme hook (system preference + manual override, persisted)
     useSidebarWidth.js            desktop sidebar drag-to-resize hook (clamped width, persisted)
+scripts/
+  master-taxonomy.cjs           canonical taxonomy definition (section/subcategory/label/description) — source of truth for reconciliation
+  cleanup-firestore.cjs         reconciles live Firestore `sounds` docs against master-taxonomy.cjs: deletes non-sound labels, fixes mismatched fields, fills in missing labels
+  create-taxonomy-sheet.cjs     exports master-taxonomy.cjs to an .xlsx workbook for offline review
 firestore.rules                 Firestore security rules
 firestore.indexes.json          Firestore index definitions
 firebase.json                   Firebase Hosting + Firestore config
@@ -72,16 +76,22 @@ Firestore collection `sounds`, one document per canonical label:
 
 ```
 {
-  batch: number,            // originating import batch (internal bookkeeping)
-  section: string,          // category, e.g. "Animal sounds"
-  subcategory: string,      // finer grouping within a section
-  canonicalLabel: string,   // the label shown in search and cards
+  batch: number,             // originating import batch (internal bookkeeping)
+  section: string,           // category, e.g. "Animal sounds"
+  subcategory: string,       // finer grouping within a section
+  canonicalLabel: string,    // the label shown in search and cards
+  description: string,       // one-sentence definition of the label
+  typicalExample: string,    // a concrete example scenario
+  acousticProfile: string,   // short acoustic characterization (pitch, level, duration, texture)
+  confusableLabels: string,  // annotation guidance on similar/adjacent labels
   references: [
     { url: string, addedBy: string, addedAt: string }
   ],
   createdAt: string
 }
 ```
+
+`description`, `typicalExample`, `acousticProfile`, and `confusableLabels` are sourced from the canonical taxonomy reference document and kept in sync via `scripts/cleanup-firestore.cjs`.
 
 ## Getting started
 
@@ -100,6 +110,11 @@ This starts the Vite dev server and connects to the live Firestore project defin
 - `npm run build` — production build to `dist/`
 - `npm run preview` — preview the production build locally
 - `npm run lint` — run Oxlint
+
+Taxonomy maintenance scripts (run directly with `node`, write to the live Firestore project — no emulator):
+
+- `node scripts/cleanup-firestore.cjs` — reconciles the `sounds` collection against `scripts/master-taxonomy.cjs`
+- `node scripts/create-taxonomy-sheet.cjs` — exports the taxonomy to an .xlsx workbook
 
 ## Deployment
 

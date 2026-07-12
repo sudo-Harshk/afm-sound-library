@@ -89,14 +89,18 @@ export default function DetailPanel({ sound, onClose, onAddReference }) {
             {/* Metadata */}
             <div className="space-y-3">
               <h4 className="text-[11px] font-semibold uppercase tracking-widest text-ink-faint">Metadata</h4>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-3">
                 <div className="p-3 bg-surface-container-low rounded border border-line">
-                  <p className="text-[11px] text-ink-faint mb-1">Subcategory</p>
-                  <p className="text-[13px] text-ink">{sound.subcategory || '—'}</p>
+                  <p className="text-[11px] text-ink-faint mb-1">Typical Example</p>
+                  <p className="text-[13px] text-ink">{sound.typicalExample || '—'}</p>
                 </div>
                 <div className="p-3 bg-surface-container-low rounded border border-line">
-                  <p className="text-[11px] text-ink-faint mb-1">References</p>
-                  <p className="text-[13px] text-ink">{references.length}</p>
+                  <p className="text-[11px] text-ink-faint mb-1">Acoustic Profile</p>
+                  <p className="text-[13px] text-ink">{sound.acousticProfile || '—'}</p>
+                </div>
+                <div className="p-3 bg-surface-container-low rounded border border-line">
+                  <p className="text-[11px] text-ink-faint mb-1">Confusable Labels</p>
+                  <p className="text-[13px] text-ink">{sound.confusableLabels || '—'}</p>
                 </div>
               </div>
             </div>

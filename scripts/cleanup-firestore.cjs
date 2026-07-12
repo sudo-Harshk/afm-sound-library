@@ -29,7 +29,8 @@ function buildMasterMap() {
   const map = {};
   for (const cat of SECTIONS) {
     for (const [sub, label, desc] of cat.labels) {
-      map[normalize(label)] = {
+      const key = `${normalize(cat.section)}::${normalize(sub)}::${normalize(label)}`;
+      map[key] = {
         section: cat.section,
         subcategory: sub,
         canonicalLabel: label,
@@ -38,6 +39,18 @@ function buildMasterMap() {
     }
   }
   return map;
+}
+
+function findMasterEntry(masterMap, section, subcategory, label) {
+  const key = `${normalize(section)}::${normalize(subcategory)}::${normalize(label)}`;
+  if (masterMap[key]) return masterMap[key];
+  // Fall back to matching by label within the same section, since a label
+  // (e.g. "Panting") can legitimately appear under multiple sections.
+  const norm = normalize(label);
+  const sectionNorm = normalize(section);
+  return Object.values(masterMap).find(
+    (e) => normalize(e.canonicalLabel) === norm && normalize(e.section) === sectionNorm
+  );
 }
 
 function isSoundLabel(section) {
@@ -85,8 +98,9 @@ async function main() {
       continue;
     }
 
-    // Find in master
-    const masterEntry = masterMap[fsNorm];
+    // Find in master (match within the doc's own section first, since the
+    // same label can legitimately exist under multiple sections, e.g. "Panting")
+    const masterEntry = findMasterEntry(masterMap, fsSection, fsDoc.subcategory || "", fsLabel);
     if (masterEntry) {
       // Check if section or other fields need updating
       const needsUpdate =
@@ -109,9 +123,13 @@ async function main() {
         alreadyOk++;
       }
     } else {
-      // Try fuzzy match
+      // Try fuzzy match, preferring an entry within the same section
       let found = false;
-      for (const [mNorm, mEntry] of Object.entries(masterMap)) {
+      const candidates = Object.values(masterMap).sort(
+        (a, b) => (normalize(b.section) === normalize(fsSection) ? 1 : 0) - (normalize(a.section) === normalize(fsSection) ? 1 : 0)
+      );
+      for (const mEntry of candidates) {
+        const mNorm = normalize(mEntry.canonicalLabel);
         if (mNorm.includes(fsNorm) || fsNorm.includes(mNorm)) {
           console.log(
             `UPDATE (fuzzy): "${fsLabel}" [${fsSection}] → "${mEntry.canonicalLabel}" [${mEntry.section}]`
@@ -134,33 +152,33 @@ async function main() {
   }
 
   // Phase 2: Add missing labels
-  const fsNorms = new Set(fsDocs.map((d) => normalize(d.canonicalLabel || "")));
-  for (const [mNorm, mEntry] of Object.entries(masterMap)) {
-    if (!fsNorms.has(mNorm)) {
-      // Also check fuzzy
-      let alreadyExists = false;
-      for (const fsNorm of fsNorms) {
-        if (fsNorm.includes(mNorm) || mNorm.includes(fsNorm)) {
-          alreadyExists = true;
-          break;
-        }
-      }
-      if (!alreadyExists) {
-        const docId = mEntry.canonicalLabel
-          .toLowerCase()
-          .replace(/[^a-z0-9]+/g, "-")
-          .replace(/^-|-$/g, "");
-        console.log(
-          `CREATE: "${mEntry.canonicalLabel}" [${mEntry.section}] (${docId})`
-        );
-        await setDoc(doc(db, "sounds", docId), {
-          section: mEntry.section,
-          subcategory: mEntry.subcategory,
-          canonicalLabel: mEntry.canonicalLabel,
-          description: mEntry.description,
-        });
-        toCreate++;
-      }
+  // A label can legitimately exist under more than one section (e.g. "Panting"
+  // under both Breathing and Dog), so presence must be tracked per section, not globally.
+  const fsSectionLabelPairs = fsDocs.map((d) => ({
+    section: normalize(d.section || ""),
+    label: normalize(d.canonicalLabel || ""),
+  }));
+  for (const mEntry of Object.values(masterMap)) {
+    const mSection = normalize(mEntry.section);
+    const mNorm = normalize(mEntry.canonicalLabel);
+    const exists = fsSectionLabelPairs.some(
+      (p) => p.section === mSection && (p.label === mNorm || p.label.includes(mNorm) || mNorm.includes(p.label))
+    );
+    if (!exists) {
+      const docId = mEntry.canonicalLabel
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-|-$/g, "");
+      console.log(
+        `CREATE: "${mEntry.canonicalLabel}" [${mEntry.section}] (${docId})`
+      );
+      await setDoc(doc(db, "sounds", docId), {
+        section: mEntry.section,
+        subcategory: mEntry.subcategory,
+        canonicalLabel: mEntry.canonicalLabel,
+        description: mEntry.description,
+      });
+      toCreate++;
     }
   }
 
