@@ -63,9 +63,23 @@ export function removeReferenceByUrl(references, url) {
   return references.filter((r) => r.url !== url);
 }
 
+export function normalizeUrl(url) {
+  if (!url) return '';
+  const trimmed = url.trim();
+  const ytId = getYouTubeId(trimmed);
+  if (ytId) return `https://www.youtube.com/watch?v=${ytId}`;
+  try {
+    const parsed = new URL(trimmed);
+    return `${parsed.hostname.replace(/^www\./, '')}${parsed.pathname.replace(/\/+$/, '')}`.toLowerCase();
+  } catch {
+    return trimmed.toLowerCase().replace(/\/+$/, '');
+  }
+}
+
 export function hasReferenceUrl(references, url) {
   if (!references || !Array.isArray(references)) return false;
-  return references.some((r) => r.url === url);
+  const needle = normalizeUrl(url);
+  return references.some((r) => normalizeUrl(r.url) === needle);
 }
 
 export function searchSounds(sounds, query) {

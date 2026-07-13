@@ -4,6 +4,7 @@ import {
   groupReferences,
   removeReferenceByUrl,
   hasReferenceUrl,
+  normalizeUrl,
   getYouTubeId,
   getDomain,
   getDomainName,
@@ -365,25 +366,25 @@ describe('hasReferenceUrl', () => {
     expect(hasReferenceUrl(refs, 'https://www.youtube.com/watch?v=dQw4w9WgXcQ')).toBe(true);
   });
 
-  it('does NOT treat different YouTube formats as duplicates', () => {
+  it('treats different YouTube formats as duplicates', () => {
     const refs = [
       { url: 'https://www.youtube.com/watch?v=abc12345678' },
     ];
-    expect(hasReferenceUrl(refs, 'https://youtu.be/abc12345678')).toBe(false);
+    expect(hasReferenceUrl(refs, 'https://youtu.be/abc12345678')).toBe(true);
   });
 
   it('detects duplicate with trailing slash difference', () => {
     const refs = [
       { url: 'https://pixabay.com/sound-effects/rattle-457080/' },
     ];
-    expect(hasReferenceUrl(refs, 'https://pixabay.com/sound-effects/rattle-457080')).toBe(false);
+    expect(hasReferenceUrl(refs, 'https://pixabay.com/sound-effects/rattle-457080')).toBe(true);
   });
 
   it('detects duplicate URL with query params vs without', () => {
     const refs = [
       { url: 'https://www.youtube.com/watch?v=abc12345678' },
     ];
-    expect(hasReferenceUrl(refs, 'https://www.youtube.com/watch?v=abc12345678&si=xyz')).toBe(false);
+    expect(hasReferenceUrl(refs, 'https://www.youtube.com/watch?v=abc12345678&si=xyz')).toBe(true);
   });
 
   it('detects duplicate across multiple existing references', () => {
@@ -409,5 +410,76 @@ describe('hasReferenceUrl', () => {
     ];
     expect(hasReferenceUrl(refs, 'https://r2.dev/audio/dog-barking.mp3')).toBe(true);
     expect(hasReferenceUrl(refs, 'https://r2.dev/audio/cat-meowing.mp3')).toBe(false);
+  });
+
+  it('detects YouTube short URL as duplicate of watch URL', () => {
+    const refs = [
+      { url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
+    ];
+    expect(hasReferenceUrl(refs, 'https://youtu.be/dQw4w9WgXcQ')).toBe(true);
+  });
+
+  it('detects YouTube shorts URL as duplicate of watch URL', () => {
+    const refs = [
+      { url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ?si=abc' },
+    ];
+    expect(hasReferenceUrl(refs, 'https://youtube.com/shorts/dQw4w9WgXcQ')).toBe(true);
+  });
+
+  it('detects duplicate with www prefix difference', () => {
+    const refs = [
+      { url: 'https://pixabay.com/sound-effects/rattle/' },
+    ];
+    expect(hasReferenceUrl(refs, 'https://www.pixabay.com/sound-effects/rattle/')).toBe(true);
+  });
+
+  it('detects duplicate with http vs https', () => {
+    const refs = [
+      { url: 'https://example.com/page' },
+    ];
+    expect(hasReferenceUrl(refs, 'http://example.com/page')).toBe(true);
+  });
+});
+
+describe('normalizeUrl', () => {
+  it('normalizes YouTube watch URL to canonical form', () => {
+    expect(normalizeUrl('https://www.youtube.com/watch?v=dQw4w9WgXcQ')).toBe('https://www.youtube.com/watch?v=dQw4w9WgXcQ');
+  });
+
+  it('normalizes youtu.be short URL to canonical watch URL', () => {
+    expect(normalizeUrl('https://youtu.be/dQw4w9WgXcQ')).toBe('https://www.youtube.com/watch?v=dQw4w9WgXcQ');
+  });
+
+  it('normalizes YouTube shorts URL to canonical watch URL', () => {
+    expect(normalizeUrl('https://youtube.com/shorts/dQw4w9WgXcQ')).toBe('https://www.youtube.com/watch?v=dQw4w9WgXcQ');
+  });
+
+  it('strips YouTube tracking params', () => {
+    expect(normalizeUrl('https://www.youtube.com/watch?v=dQw4w9WgXcQ&si=abc123')).toBe('https://www.youtube.com/watch?v=dQw4w9WgXcQ');
+  });
+
+  it('strips trailing slash from non-YouTube URLs', () => {
+    expect(normalizeUrl('https://pixabay.com/sound-effects/rattle/')).toBe('pixabay.com/sound-effects/rattle');
+  });
+
+  it('removes www prefix', () => {
+    expect(normalizeUrl('https://www.example.com/page')).toBe('example.com/page');
+  });
+
+  it('lowercases hostname and path', () => {
+    expect(normalizeUrl('https://EXAMPLE.COM/Page')).toBe('example.com/page');
+  });
+
+  it('returns empty string for null/undefined', () => {
+    expect(normalizeUrl(null)).toBe('');
+    expect(normalizeUrl(undefined)).toBe('');
+  });
+
+  it('handles invalid URLs by lowercasing', () => {
+    expect(normalizeUrl('not-a-url')).toBe('not-a-url');
+  });
+
+  it('handles empty string', () => {
+    expect(normalizeUrl('')).toBe('');
   });
 });

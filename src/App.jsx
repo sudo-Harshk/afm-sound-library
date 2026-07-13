@@ -10,7 +10,7 @@ import TopBar from './components/TopBar';
 import DataTable from './components/DataTable';
 import Breadcrumb from './components/Breadcrumb';
 import DetailPanel from './components/DetailPanel';
-import { searchSounds, removeReferenceByUrl } from './lib/refs';
+import { searchSounds, removeReferenceByUrl, hasReferenceUrl } from './lib/refs';
 import { useTheme } from './lib/useTheme';
 import { useSidebarWidth } from './lib/useSidebarWidth';
 
@@ -104,6 +104,11 @@ export default function App() {
 
   const handleAddReference = useCallback(async (soundId, url) => {
     const soundRef = doc(db, 'sounds', soundId);
+    const snap = await getDoc(soundRef);
+    const current = snap.exists() ? (snap.data().references || []) : [];
+    if (hasReferenceUrl(current, url)) {
+      throw new Error('DUPLICATE_URL');
+    }
     await updateDoc(soundRef, {
       references: arrayUnion({ url, addedBy: 'user', addedAt: new Date().toISOString() }),
     });

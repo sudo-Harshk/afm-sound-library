@@ -26,7 +26,8 @@ export default function LabelRow({ sound, showBreadcrumb = true, onAddReference,
       setUrl('');
       setAdding(false);
       setError('');
-    } catch {
+    } catch (e) {
+      if (e?.message === 'DUPLICATE_URL') return setError('This URL is already added');
       setError('Failed to add — try again');
     } finally {
       setSaving(false);
