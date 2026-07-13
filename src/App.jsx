@@ -1,10 +1,10 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, lazy, Suspense } from 'react';
 import { collection, onSnapshot, updateDoc, doc, arrayUnion, getDoc } from 'firebase/firestore';
 import { db } from './firebase';
 import SearchBar from './components/SearchBar';
 import CategoryList from './components/CategoryList';
 import LabelList from './components/LabelList';
-import CategoryDetail from './components/CategoryDetail';
+const CategoryDetail = lazy(() => import('./components/CategoryDetail'));
 import Sidebar from './components/Sidebar';
 import TopBar from './components/TopBar';
 import DataTable from './components/DataTable';
@@ -237,13 +237,15 @@ function renderContent(isSearching, searchResults, activeCategory, categorySound
   }
   if (activeCategory) {
     return (
-      <CategoryDetail
-        category={activeCategory}
-        sounds={categorySounds}
-        onBack={() => setActiveCategory(null)}
-        onAddReference={handleAddReference}
-        onDeleteReference={handleDeleteReference}
-      />
+      <Suspense fallback={<div className="py-8 text-center text-ink-faint text-sm">Loading…</div>}>
+        <CategoryDetail
+          category={activeCategory}
+          sounds={categorySounds}
+          onBack={() => setActiveCategory(null)}
+          onAddReference={handleAddReference}
+          onDeleteReference={handleDeleteReference}
+        />
+      </Suspense>
     );
   }
   return (
