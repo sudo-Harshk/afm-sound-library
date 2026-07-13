@@ -3,6 +3,7 @@ import {
   isAudioUrl,
   groupReferences,
   removeReferenceByUrl,
+  hasReferenceUrl,
   getYouTubeId,
   getDomain,
   getDomainName,
@@ -315,5 +316,45 @@ describe('removeReferenceByUrl', () => {
     const result = removeReferenceByUrl(refs, 'https://r2.dev/audio/sound.mp3');
     expect(result).toHaveLength(1);
     expect(result[0].url).toBe('https://r2.dev/audio/other.mp3');
+  });
+});
+
+describe('hasReferenceUrl', () => {
+  it('returns true when URL exists in references', () => {
+    const refs = [
+      { url: 'https://www.youtube.com/watch?v=abc12345678', addedBy: 'user' },
+      { url: 'https://www.youtube.com/watch?v=xyz98765432', addedBy: 'user' },
+    ];
+    expect(hasReferenceUrl(refs, 'https://www.youtube.com/watch?v=abc12345678')).toBe(true);
+  });
+
+  it('returns false when URL does not exist', () => {
+    const refs = [
+      { url: 'https://www.youtube.com/watch?v=abc12345678', addedBy: 'user' },
+    ];
+    expect(hasReferenceUrl(refs, 'https://www.youtube.com/watch?v=nonexistent')).toBe(false);
+  });
+
+  it('returns false for empty array', () => {
+    expect(hasReferenceUrl([], 'https://www.youtube.com/watch?v=abc')).toBe(false);
+  });
+
+  it('returns false for null/undefined input', () => {
+    expect(hasReferenceUrl(null, 'url')).toBe(false);
+    expect(hasReferenceUrl(undefined, 'url')).toBe(false);
+  });
+
+  it('matches exact URL string', () => {
+    const refs = [
+      { url: 'https://www.youtube.com/watch?v=abc12345678', addedBy: 'user' },
+    ];
+    expect(hasReferenceUrl(refs, 'https://www.youtube.com/watch?v=ABC12345678')).toBe(false);
+  });
+
+  it('detects duplicates regardless of extra fields', () => {
+    const refs = [
+      { url: 'https://www.youtube.com/watch?v=abc12345678', addedBy: 'user', addedAt: '2025-01-01', source: 'spreadsheet' },
+    ];
+    expect(hasReferenceUrl(refs, 'https://www.youtube.com/watch?v=abc12345678')).toBe(true);
   });
 });

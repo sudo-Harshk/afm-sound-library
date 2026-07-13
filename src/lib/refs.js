@@ -63,6 +63,11 @@ export function removeReferenceByUrl(references, url) {
   return references.filter((r) => r.url !== url);
 }
 
+export function hasReferenceUrl(references, url) {
+  if (!references || !Array.isArray(references)) return false;
+  return references.some((r) => r.url === url);
+}
+
 export function searchSounds(sounds, query) {
   const q = query.trim().toLowerCase();
   if (!q) return [];

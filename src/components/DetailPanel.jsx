@@ -30,8 +30,8 @@ export default function DetailPanel({ sound, onClose, onAddReference, onDeleteRe
       setUrl('');
       setAdding(false);
       setError('');
-    } catch {
-      setError('Failed to add — try again');
+    } catch (err) {
+      setError(err?.message === 'duplicate' ? 'This URL is already added' : 'Failed to add — try again');
     } finally {
       setSaving(false);
     }
