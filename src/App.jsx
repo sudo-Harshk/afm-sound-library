@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { collection, onSnapshot, updateDoc, doc, arrayUnion, arrayRemove } from 'firebase/firestore';
+import { collection, onSnapshot, updateDoc, doc, arrayUnion, getDoc } from 'firebase/firestore';
 import { db } from './firebase';
 import SearchBar from './components/SearchBar';
 import CategoryList from './components/CategoryList';
@@ -10,7 +10,7 @@ import TopBar from './components/TopBar';
 import DataTable from './components/DataTable';
 import Breadcrumb from './components/Breadcrumb';
 import DetailPanel from './components/DetailPanel';
-import { searchSounds } from './lib/refs';
+import { searchSounds, removeReferenceByUrl } from './lib/refs';
 import { useTheme } from './lib/useTheme';
 import { useSidebarWidth } from './lib/useSidebarWidth';
 
@@ -111,9 +111,11 @@ export default function App() {
 
   const handleDeleteReference = useCallback(async (soundId, ref) => {
     const soundRef = doc(db, 'sounds', soundId);
-    await updateDoc(soundRef, {
-      references: arrayRemove({ url: ref.url, addedBy: ref.addedBy, addedAt: ref.addedAt }),
-    });
+    const snap = await getDoc(soundRef);
+    if (!snap.exists()) return;
+    const current = snap.data().references || [];
+    const updated = removeReferenceByUrl(current, ref.url);
+    await updateDoc(soundRef, { references: updated });
   }, []);
 
   if (loading) {

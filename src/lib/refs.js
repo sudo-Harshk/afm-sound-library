@@ -58,6 +58,11 @@ export function groupReferences(references) {
   return groups;
 }
 
+export function removeReferenceByUrl(references, url) {
+  if (!references || !Array.isArray(references)) return [];
+  return references.filter((r) => r.url !== url);
+}
+
 export function searchSounds(sounds, query) {
   const q = query.trim().toLowerCase();
   if (!q) return [];

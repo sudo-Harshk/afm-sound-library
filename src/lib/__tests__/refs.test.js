@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import {
   isAudioUrl,
   groupReferences,
+  removeReferenceByUrl,
   getYouTubeId,
   getDomain,
   getDomainName,
@@ -227,5 +228,92 @@ describe('isAllowedDomain', () => {
 
   it('returns false for unknown domains', () => {
     expect(isAllowedDomain('https://soundcloud.com/track')).toBe(false);
+  });
+});
+
+describe('removeReferenceByUrl', () => {
+  it('removes a reference matching the given URL', () => {
+    const refs = [
+      { url: 'https://www.youtube.com/watch?v=abc12345678', addedBy: 'user' },
+      { url: 'https://www.youtube.com/watch?v=xyz98765432', addedBy: 'user' },
+    ];
+    const result = removeReferenceByUrl(refs, 'https://www.youtube.com/watch?v=abc12345678');
+    expect(result).toHaveLength(1);
+    expect(result[0].url).toBe('https://www.youtube.com/watch?v=xyz98765432');
+  });
+
+  it('removes only the matching URL when duplicates exist', () => {
+    const refs = [
+      { url: 'https://www.youtube.com/watch?v=abc12345678', addedBy: 'user' },
+      { url: 'https://www.youtube.com/watch?v=abc12345678', addedBy: 'other' },
+      { url: 'https://www.youtube.com/watch?v=xyz98765432', addedBy: 'user' },
+    ];
+    const result = removeReferenceByUrl(refs, 'https://www.youtube.com/watch?v=abc12345678');
+    expect(result).toHaveLength(1);
+    expect(result[0].url).toBe('https://www.youtube.com/watch?v=xyz98765432');
+  });
+
+  it('returns empty array when removing the only reference', () => {
+    const refs = [
+      { url: 'https://www.youtube.com/watch?v=abc12345678', addedBy: 'user' },
+    ];
+    const result = removeReferenceByUrl(refs, 'https://www.youtube.com/watch?v=abc12345678');
+    expect(result).toEqual([]);
+  });
+
+  it('returns original array when URL does not match any ref', () => {
+    const refs = [
+      { url: 'https://www.youtube.com/watch?v=abc12345678', addedBy: 'user' },
+    ];
+    const result = removeReferenceByUrl(refs, 'https://www.youtube.com/watch?v=nonexistent');
+    expect(result).toHaveLength(1);
+  });
+
+  it('handles references with extra fields (spreadsheet imports)', () => {
+    const refs = [
+      { url: 'https://www.youtube.com/watch?v=abc12345678', addedBy: 'user', addedAt: '2025-01-01', source: 'spreadsheet' },
+      { url: 'https://www.youtube.com/watch?v=xyz98765432', addedBy: 'user', addedAt: '2025-01-02' },
+    ];
+    const result = removeReferenceByUrl(refs, 'https://www.youtube.com/watch?v=abc12345678');
+    expect(result).toHaveLength(1);
+    expect(result[0].url).toBe('https://www.youtube.com/watch?v=xyz98765432');
+  });
+
+  it('handles references with missing addedBy/addedAt', () => {
+    const refs = [
+      { url: 'https://www.youtube.com/watch?v=abc12345678' },
+      { url: 'https://www.youtube.com/watch?v=xyz98765432', addedBy: 'user' },
+    ];
+    const result = removeReferenceByUrl(refs, 'https://www.youtube.com/watch?v=abc12345678');
+    expect(result).toHaveLength(1);
+    expect(result[0].url).toBe('https://www.youtube.com/watch?v=xyz98765432');
+  });
+
+  it('returns empty array for null/undefined input', () => {
+    expect(removeReferenceByUrl(null, 'url')).toEqual([]);
+    expect(removeReferenceByUrl(undefined, 'url')).toEqual([]);
+  });
+
+  it('returns empty array for empty input array', () => {
+    expect(removeReferenceByUrl([], 'url')).toEqual([]);
+  });
+
+  it('does not mutate the original array', () => {
+    const refs = [
+      { url: 'https://www.youtube.com/watch?v=abc12345678', addedBy: 'user' },
+      { url: 'https://www.youtube.com/watch?v=xyz98765432', addedBy: 'user' },
+    ];
+    removeReferenceByUrl(refs, 'https://www.youtube.com/watch?v=abc12345678');
+    expect(refs).toHaveLength(2);
+  });
+
+  it('removes audio file references by URL', () => {
+    const refs = [
+      { url: 'https://r2.dev/audio/sound.mp3', addedBy: 'user' },
+      { url: 'https://r2.dev/audio/other.mp3', addedBy: 'user' },
+    ];
+    const result = removeReferenceByUrl(refs, 'https://r2.dev/audio/sound.mp3');
+    expect(result).toHaveLength(1);
+    expect(result[0].url).toBe('https://r2.dev/audio/other.mp3');
   });
 });
