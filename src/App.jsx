@@ -112,7 +112,7 @@ export default function App() {
   const handleDeleteReference = useCallback(async (soundId, ref) => {
     const soundRef = doc(db, 'sounds', soundId);
     await updateDoc(soundRef, {
-      references: arrayRemove(ref),
+      references: arrayRemove({ url: ref.url, addedBy: ref.addedBy, addedAt: ref.addedAt }),
     });
   }, []);
 
