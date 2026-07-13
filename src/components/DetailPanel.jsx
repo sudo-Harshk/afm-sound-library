@@ -7,13 +7,15 @@ export default function DetailPanel({ sound, onClose, onAddReference, onDeleteRe
   const [url, setUrl] = useState('');
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
+  const [playingUrl, setPlayingUrl] = useState(null);
 
   if (!sound) return null;
 
   const references = sound.references || [];
   const sectionIcon = getCategoryIcon(sound.section || '');
   const firstYoutube = references.find((r) => getYouTubeId(r.url));
-  const youtubeId = firstYoutube ? getYouTubeId(firstYoutube.url) : null;
+  const fallbackYoutubeId = firstYoutube ? getYouTubeId(firstYoutube.url) : null;
+  const activeYoutubeId = playingUrl ? getYouTubeId(playingUrl) : fallbackYoutubeId;
 
   const submitReference = async (e) => {
     e.preventDefault();
@@ -69,9 +71,9 @@ export default function DetailPanel({ sound, onClose, onAddReference, onDeleteRe
         <div className="flex-1 overflow-y-auto">
           {/* Media preview */}
           <div className="w-full aspect-video bg-black relative">
-            {youtubeId ? (
+            {activeYoutubeId ? (
               <iframe
-                src={`https://www.youtube.com/embed/${youtubeId}?autoplay=0&rel=0`}
+                src={`https://www.youtube.com/embed/${activeYoutubeId}?autoplay=${playingUrl ? '1' : '0'}&rel=0`}
                 className="absolute inset-0 w-full h-full"
                 allow="encrypted-media"
                 allowFullScreen
@@ -180,11 +182,16 @@ export default function DetailPanel({ sound, onClose, onAddReference, onDeleteRe
                           ) : (
                             section.refs.map((ref, i) => {
                               const ytId = ref.youtubeId || getYouTubeId(ref.url);
+                              const isPlaying = playingUrl === ref.url;
                               return (
                                 <div key={i} className="flex items-center gap-2">
                                   <button
-                                    onClick={() => window.open(ref.url, '_blank', 'noopener,noreferrer')}
-                                    className="flex-1 min-w-0 flex items-center gap-2.5 px-3 py-2 rounded-lg border border-line text-[13px] font-medium text-ink-soft hover:border-accent/50 hover:text-accent transition-colors"
+                                    onClick={() => ytId ? setPlayingUrl(isPlaying ? null : ref.url) : window.open(ref.url, '_blank', 'noopener,noreferrer')}
+                                    className={`flex-1 min-w-0 flex items-center gap-2.5 px-3 py-2 rounded-lg border text-[13px] font-medium transition-colors ${
+                                      isPlaying
+                                        ? 'border-accent text-accent bg-accent-soft'
+                                        : 'border-line text-ink-soft hover:border-accent/50 hover:text-accent'
+                                    }`}
                                   >
                                     <span className="w-5 h-5 rounded-full bg-accent-soft flex items-center justify-center text-accent shrink-0">
                                       <span className="material-symbols-outlined text-[14px]">
