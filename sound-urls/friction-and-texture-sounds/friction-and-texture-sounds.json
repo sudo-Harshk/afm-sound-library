@@ -1,0 +1,70 @@
+{
+  "category": "Friction and Texture Sounds",
+  "labels": [
+    {
+      "subCategory": "Hard friction",
+      "canonicalLabel": "Scraping",
+      "url": "https://www.youtube.com/watch?v=gKYJDIGrE04"
+    },
+    {
+      "subCategory": "Fine friction",
+      "canonicalLabel": "Scratching",
+      "url": "https://youtu.be/vQ5HICQaRf8?si=6aeRfFh29mPbvSiK"
+    },
+    {
+      "subCategory": "Flexible material",
+      "canonicalLabel": "Scrunching or crinkling",
+      "url": "https://youtu.be/0aSZntMMHbU?si=KUlyeRD_VUlDPUeV"
+    },
+    {
+      "subCategory": "Tight friction",
+      "canonicalLabel": "Squeaking",
+      "url": "https://youtu.be/u2bJuLxl7TY?si=7nWO7tnqigkasOhT"
+    },
+    {
+      "subCategory": "Hard surfaces",
+      "canonicalLabel": "Grinding",
+      "url": "https://youtu.be/CkLMbFxGHsk?si=QAS57XgRnegYrBS-"
+    },
+    {
+      "subCategory": "Structural friction",
+      "canonicalLabel": "Creaking",
+      "url": "https://youtu.be/c1gt5FFhJd8?si=CdKXFfQHXb4BtBw7"
+    },
+    {
+      "subCategory": "High friction",
+      "canonicalLabel": "Squealing",
+      "url": "https://youtu.be/CRlm4PFgVYw"
+    },
+    {
+      "subCategory": "Paper",
+      "canonicalLabel": "Rustling or crinkling",
+      "url": "https://youtu.be/0mUcAWbTfmo"
+    },
+    {
+      "subCategory": "Abrasive material",
+      "canonicalLabel": "Abrasive rubbing",
+      "url": "https://youtu.be/8ef5PdZdyT4"
+    },
+    {
+      "subCategory": "Surface cleaning",
+      "canonicalLabel": "Brushing or sweeping",
+      "url": "https://youtu.be/qR9P2BYuoyc"
+    },
+    {
+      "subCategory": "Sliding mechanism",
+      "canonicalLabel": "Drawer or cabinet sliding",
+      "url": "https://youtu.be/WPLlOVB06V0"
+    },
+    {
+      "subCategory": "Fastener",
+      "canonicalLabel": "Zipping sound",
+      "url": "https://youtu.be/oBzfJ4Hmzi8"
+    },
+    {
+      "subCategory": "Cutting tool",
+      "canonicalLabel": "Scissor snipping",
+      "url": "https://youtu.be/p6wnWpVf97Q"
+    }
+  ]
+}

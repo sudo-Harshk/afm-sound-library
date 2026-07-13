@@ -1,0 +1,50 @@
+{
+  "category": "Music and Tonal Sounds",
+  "labels": [
+    {
+      "subCategory": "Chime",
+      "canonicalLabel": "Chime",
+      "url": "https://youtube.com/shorts/E-mzn4wQJok?si=3YDYFFI0Cvbxueoi"
+    },
+    {
+      "subCategory": "String",
+      "canonicalLabel": "Strumming sound",
+      "url": "https://www.youtube.com/shorts/mAM_J6KjNFA"
+    },
+    {
+      "subCategory": "Percussion",
+      "canonicalLabel": "Drum beat",
+      "url": "https://www.youtube.com/shorts/8lHmzU0fElU"
+    },
+    {
+      "subCategory": "Resonant",
+      "canonicalLabel": "Bell ringing tone",
+      "url": "https://www.youtube.com/shorts/CqcS67IqAxc"
+    },
+    {
+      "subCategory": "String/pluck",
+      "canonicalLabel": "Twang",
+      "url": "https://www.youtube.com/shorts/t08rc2I-JiI"
+    },
+    {
+      "subCategory": "Keyboard instrument",
+      "canonicalLabel": "Piano note",
+      "url": "https://www.youtube.com/watch?v=KA0Yh1OxJVI"
+    },
+    {
+      "subCategory": "Wind instrument",
+      "canonicalLabel": "Flute tone",
+      "url": "https://www.youtube.com/shorts/djNhGzxQjm8"
+    },
+    {
+      "subCategory": "Brass/Horn",
+      "canonicalLabel": "Horn or trumpet",
+      "url": "https://www.youtube.com/shorts/WPZu3MkoY1E"
+    },
+    {
+      "subCategory": "Rhythm",
+      "canonicalLabel": "Small percussion tone",
+      "url": "https://www.youtube.com/shorts/0-MwiWZqjC8"
+    }
+  ]
+}

@@ -35,6 +35,29 @@ export function isAllowedDomain(value) {
   return ALLOWED_DOMAINS.some((d) => domain.includes(d));
 }
 
+export function isAudioUrl(url) {
+  if (!url) return false;
+  return /\.(mp3|wav|ogg|m4a|flac)(\?|#|$)/i.test(url);
+}
+
+export function groupReferences(references) {
+  const groups = { youtube: [], audio: [], other: [] };
+  if (!references || !Array.isArray(references)) return groups;
+  for (const ref of references) {
+    if (!ref || !ref.url) continue;
+    const ytId = getYouTubeId(ref.url);
+    const isAudio = isAudioUrl(ref.url);
+    if (ytId) {
+      groups.youtube.push({ ...ref, youtubeId: ytId });
+    } else if (isAudio) {
+      groups.audio.push(ref);
+    } else {
+      groups.other.push(ref);
+    }
+  }
+  return groups;
+}
+
 export function searchSounds(sounds, query) {
   const q = query.trim().toLowerCase();
   if (!q) return [];

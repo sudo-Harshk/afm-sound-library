@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ExternalLink, Play, Plus, Info, X } from 'lucide-react';
-import { getYouTubeId, getDomainName, isValidUrl, isAllowedDomain } from '../lib/refs';
+import { getYouTubeId, getDomainName, isValidUrl, isAllowedDomain, groupReferences } from '../lib/refs';
 import { getCategoryIcon } from '../lib/icons';
 
 const VISIBLE_CHIPS = 3;
@@ -148,30 +148,62 @@ export default function SoundCardFace({ sound, isFront, onAddReference, onLockDr
             </button>
           </div>
 
-          <div className="flex-1 min-h-0 overflow-y-auto space-y-2">
+          <div className="flex-1 min-h-0 overflow-y-auto space-y-3">
             {references.length === 0 && <p className="text-sm text-ink-faint">No references yet.</p>}
-            {references.map((ref, i) => {
-              const ytId = getYouTubeId(ref.url);
-              const isPlaying = playingUrl === ref.url;
-              return (
-                <button
-                  key={i}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    if (ytId) setPlayingUrl(isPlaying ? null : ref.url);
-                    else window.open(ref.url, '_blank', 'noopener,noreferrer');
-                  }}
-                  className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg border text-sm font-medium transition-colors duration-150 ${
-                    isPlaying ? 'border-accent text-accent bg-accent-soft' : 'border-line text-ink-soft hover:border-accent/50 hover:text-accent'
-                  }`}
-                >
-                  <span className="w-5 h-5 rounded-full bg-accent-soft flex items-center justify-center text-accent shrink-0">
-                    {ytId ? <Play className="w-2.5 h-2.5 ml-0.5" /> : <ExternalLink className="w-2.5 h-2.5" />}
-                  </span>
-                  {getDomainName(ref.url)}
-                </button>
-              );
-            })}
+            {(() => {
+              const groups = groupReferences(references);
+              const sections = [
+                { key: 'youtube', title: 'YouTube', icon: 'play_circle', refs: groups.youtube },
+                { key: 'audio', title: 'Audio', icon: 'audio_file', refs: groups.audio },
+                { key: 'other', title: 'Other', icon: 'link', refs: groups.other },
+              ].filter((s) => s.refs.length > 0);
+              return sections.map((section) => (
+                <div key={section.key} className="space-y-1.5">
+                  <p className="text-[10px] font-medium text-ink-faint">
+                    {section.title}{' '}
+                    <span className="text-ink-faint/50">({section.refs.length})</span>
+                  </p>
+                  <div className="space-y-1.5">
+                    {section.key === 'audio' ? (
+                      section.refs.map((ref, i) => (
+                        <div
+                          key={i}
+                          className="w-full px-3 py-2 rounded-lg border border-line"
+                        >
+                          <p className="text-[10px] text-ink-faint mb-1 truncate">{ref.url}</p>
+                          <audio controls preload="none" className="w-full h-7">
+                            <source src={ref.url} />
+                          </audio>
+                        </div>
+                      ))
+                    ) : (
+                      section.refs.map((ref, i) => {
+                        const ytId = ref.youtubeId || getYouTubeId(ref.url);
+                        const isPlaying = playingUrl === ref.url;
+                        return (
+                          <button
+                            key={i}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (ytId) setPlayingUrl(isPlaying ? null : ref.url);
+                              else window.open(ref.url, '_blank', 'noopener,noreferrer');
+                            }}
+                            className={`w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg border text-xs font-medium transition-colors duration-150 ${
+                              isPlaying ? 'border-accent text-accent bg-accent-soft' : 'border-line text-ink-soft hover:border-accent/50 hover:text-accent'
+                            }`}
+                          >
+                            <span className="w-4 h-4 rounded-full bg-accent-soft flex items-center justify-center text-accent shrink-0">
+                              {ytId ? <Play className="w-2.5 h-2.5 ml-0.5" /> : <ExternalLink className="w-2.5 h-2.5" />}
+                            </span>
+                            {getDomainName(ref.url)}
+                          </button>
+                        );
+                      })
+                    )}
+                  </div>
+                </div>
+              ));
+            })()}
           </div>
 
           <div className="shrink-0 pt-3 border-t border-line mt-3">

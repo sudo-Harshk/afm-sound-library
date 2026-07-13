@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { ChevronDown, Plus, ExternalLink, Play } from 'lucide-react';
-import { getYouTubeId, getDomainName, isValidUrl, isAllowedDomain } from '../lib/refs';
+import { getYouTubeId, getDomainName, isValidUrl, isAllowedDomain, groupReferences } from '../lib/refs';
 
 export default function LabelRow({ sound, showBreadcrumb = true, onAddReference }) {
   const [open, setOpen] = useState(false);
@@ -54,34 +54,66 @@ export default function LabelRow({ sound, showBreadcrumb = true, onAddReference 
             <p className="text-sm text-ink-faint">No references yet.</p>
           )}
 
-          {references.map((ref, i) => {
-            const ytId = getYouTubeId(ref.url);
-            const isPlaying = playingUrl === ref.url;
-            return (
-              <div key={i} className="space-y-2">
-                <button
-                  onClick={() => ytId ? setPlayingUrl(isPlaying ? null : ref.url) : window.open(ref.url, '_blank', 'noopener,noreferrer')}
-                  className="inline-flex items-center gap-2 pl-1.5 pr-3 py-1.5 rounded-full border border-line bg-paper-raised text-xs font-medium text-ink-soft hover:border-accent/50 hover:text-accent transition-colors duration-150"
-                >
-                  <span className="w-5 h-5 rounded-full bg-accent-soft flex items-center justify-center text-accent">
-                    {ytId ? <Play className="w-2.5 h-2.5 ml-0.5" /> : <ExternalLink className="w-2.5 h-2.5" />}
-                  </span>
-                  {getDomainName(ref.url)}
-                </button>
-                {isPlaying && ytId && (
-                  <div className="relative w-full max-w-md aspect-video rounded-lg overflow-hidden border border-line shadow-[var(--shadow-card)]">
-                    <iframe
-                      src={`https://www.youtube.com/embed/${ytId}?autoplay=1&rel=0`}
-                      className="absolute inset-0 w-full h-full"
-                      allow="autoplay; encrypted-media"
-                      allowFullScreen
-                      title={sound.canonicalLabel}
-                    />
-                  </div>
-                )}
+          {(() => {
+            const groups = groupReferences(references);
+            const sections = [
+              { key: 'youtube', title: 'YouTube', refs: groups.youtube },
+              { key: 'audio', title: 'Audio', refs: groups.audio },
+              { key: 'other', title: 'Other', refs: groups.other },
+            ].filter((s) => s.refs.length > 0);
+            return sections.map((section) => (
+              <div key={section.key} className="space-y-2">
+                <p className="text-[10px] font-medium text-ink-faint">
+                  {section.title}{' '}
+                  <span className="text-ink-faint/50">({section.refs.length})</span>
+                </p>
+                <div className="space-y-2">
+                  {section.key === 'audio' ? (
+                    section.refs.map((ref, i) => (
+                      <div
+                        key={i}
+                        className="w-full px-3 py-2 rounded-lg border border-line bg-paper-raised"
+                      >
+                        <p className="text-[10px] text-ink-faint mb-1 truncate">{ref.url}</p>
+                        <audio controls preload="none" className="w-full h-7">
+                          <source src={ref.url} />
+                        </audio>
+                      </div>
+                    ))
+                  ) : (
+                    section.refs.map((ref, i) => {
+                      const ytId = ref.youtubeId || getYouTubeId(ref.url);
+                      const isPlaying = playingUrl === ref.url;
+                      return (
+                        <div key={i} className="space-y-2">
+                          <button
+                            onClick={() => ytId ? setPlayingUrl(isPlaying ? null : ref.url) : window.open(ref.url, '_blank', 'noopener,noreferrer')}
+                            className="inline-flex items-center gap-2 pl-1.5 pr-3 py-1.5 rounded-full border border-line bg-paper-raised text-xs font-medium text-ink-soft hover:border-accent/50 hover:text-accent transition-colors duration-150"
+                          >
+                            <span className="w-5 h-5 rounded-full bg-accent-soft flex items-center justify-center text-accent">
+                              {ytId ? <Play className="w-2.5 h-2.5 ml-0.5" /> : <ExternalLink className="w-2.5 h-2.5" />}
+                            </span>
+                            {getDomainName(ref.url)}
+                          </button>
+                          {isPlaying && ytId && (
+                            <div className="relative w-full max-w-md aspect-video rounded-lg overflow-hidden border border-line shadow-[var(--shadow-card)]">
+                              <iframe
+                                src={`https://www.youtube.com/embed/${ytId}?autoplay=1&rel=0`}
+                                className="absolute inset-0 w-full h-full"
+                                allow="autoplay; encrypted-media"
+                                allowFullScreen
+                                title={sound.canonicalLabel}
+                              />
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })
+                  )}
+                </div>
               </div>
-            );
-          })}
+            ));
+          })()}
 
           {adding ? (
             <form onSubmit={submitReference} className="flex items-center gap-2 pt-1">

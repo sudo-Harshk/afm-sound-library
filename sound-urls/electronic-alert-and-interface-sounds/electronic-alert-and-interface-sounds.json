@@ -1,0 +1,70 @@
+{
+  "category": "Electronic, Alert, and Interface Sounds",
+  "labels": [
+    {
+      "subCategory": "Signal",
+      "canonicalLabel": "Beep",
+      "url": "https://www.youtube.com/watch?v=nHV42iRGwPc"
+    },
+    {
+      "subCategory": "Warning",
+      "canonicalLabel": "Alarm or siren",
+      "url": "https://www.youtube.com/shorts/B7Wf5kE-YoA"
+    },
+    {
+      "subCategory": "Signal",
+      "canonicalLabel": "Buzzer",
+      "url": "https://youtu.be/2naim9F4010?si=V7D21G8zrB6ARLZ-"
+    },
+    {
+      "subCategory": "Digital",
+      "canonicalLabel": "Notification tone",
+      "url": "https://youtu.be/u2qLvb0lpyk?si=rCMlCZhM18JBkXlQ"
+    },
+    {
+      "subCategory": "Timer",
+      "canonicalLabel": "Timer or countdown beeping",
+      "url": "https://www.youtube.com/watch?v=Asj1klk4cIw"
+    },
+    {
+      "subCategory": "Door alert",
+      "canonicalLabel": "Doorbell or chime tone",
+      "url": "https://www.youtube.com/watch?v=1arw4MVxJ4Y"
+    },
+    {
+      "subCategory": "Typing / interface",
+      "canonicalLabel": "Typing or keystrokes",
+      "url": "https://www.youtube.com/shorts/NR6UANqsvjo"
+    },
+    {
+      "subCategory": "Interface",
+      "canonicalLabel": "Interface click",
+      "url": "https://www.youtube.com/shorts/vD1KabBSMBA"
+    },
+    {
+      "subCategory": "Interface",
+      "canonicalLabel": "Tapping sound",
+      "url": "https://www.youtube.com/watch?v=Fa7bUDEHrN4"
+    },
+    {
+      "subCategory": "Small mechanism",
+      "canonicalLabel": "Mechanical click",
+      "url": "https://www.youtube.com/shorts/6Rvybdk11nE"
+    },
+    {
+      "subCategory": "Switch",
+      "canonicalLabel": "Switch snap or click",
+      "url": "https://www.youtube.com/shorts/p0tj-om3f6s"
+    },
+    {
+      "subCategory": "Telephony",
+      "canonicalLabel": "Phone ringing tone",
+      "url": "https://youtu.be/hE1PvBQKlRY?si=dcC3ZjPkXVs6njxz"
+    },
+    {
+      "subCategory": "Sound Reproduction",
+      "canonicalLabel": "Media playback sound",
+      "url": "https://www.youtube.com/shorts/RVbnm-sjBKI"
+    }
+  ]
+}

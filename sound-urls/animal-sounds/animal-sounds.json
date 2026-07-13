@@ -1,0 +1,126 @@
+{
+  "category": "Animal Sounds",
+  "labels": [
+    {
+      "subCategory": "Dog",
+      "canonicalLabel": "Dog Barking",
+      "url": "https://youtube.com/shorts/EiWUfn2QZSM?si=b7f6tlBXHgCTuuFw"
+    },
+    {
+      "subCategory": "Dog",
+      "canonicalLabel": "Dog growling",
+      "url": "https://youtube.com/shorts/o8dpfnFDbH0?si=siqoIR6yB-xrzHM7"
+    },
+    {
+      "subCategory": "Cat",
+      "canonicalLabel": "Cat Meowing",
+      "url": "https://youtube.com/shorts/4IwSsrNYQwI?si=6AFxUEiPYgM0-4dR"
+    },
+    {
+      "subCategory": "Cat",
+      "canonicalLabel": "Cat purring",
+      "url": "https://youtu.be/X3sdsTQO4mc?si=WgRRQQmrQnsTkRZM"
+    },
+    {
+      "subCategory": "Cat",
+      "canonicalLabel": "Cat hissing",
+      "url": "https://youtube.com/shorts/oLTmzH6ECJA?si=9ahGfsYAorLenxwF"
+    },
+    {
+      "subCategory": "Bird",
+      "canonicalLabel": "Bird chirping",
+      "url": "https://youtube.com/shorts/WBqf-vSMA6k?si=R3LNEhMeq1iLPQOc"
+    },
+    {
+      "subCategory": "Bird",
+      "canonicalLabel": "Bird screeching",
+      "url": "https://youtube.com/shorts/abSFhptSHhU?si=44xKdOdVSY2DzFzp"
+    },
+    {
+      "subCategory": "Insect",
+      "canonicalLabel": "Buzzing insect",
+      "url": "https://youtube.com/shorts/fveRAWJExQY?si=ePItUgdzL9Ve5YzL"
+    },
+    {
+      "subCategory": "Amphibian",
+      "canonicalLabel": "Frog croaking",
+      "url": "https://youtube.com/shorts/PtK7s298CuU?si=OqDu6eIiMmg7K84y"
+    },
+    {
+      "subCategory": "Wild animal",
+      "canonicalLabel": "Wolf howling",
+      "url": "https://youtube.com/shorts/il0c4wq5GZw?si=a6oINFdioPyMjmBU"
+    },
+    {
+      "subCategory": "Reptile",
+      "canonicalLabel": "Rattlesnake rattling",
+      "url": "https://youtube.com/shorts/c0FL91u4QBg?si=OCBOsSm1Hfk4g-66"
+    },
+    {
+      "subCategory": "Small mammal",
+      "canonicalLabel": "Chittering",
+      "url": "https://youtu.be/v0TiFZA68ZU?si=HCkoVv7aUTOFqQxP&t=26"
+    },
+    {
+      "subCategory": "Bird",
+      "canonicalLabel": "Duck quacking",
+      "url": "https://youtube.com/shorts/fYmsrZjvnwY?si=X3kXy7SljmkDF7z6"
+    },
+    {
+      "subCategory": "Livestock",
+      "canonicalLabel": "Cow mooing",
+      "url": "https://youtu.be/eGwnsdRzDv8?si=twmqpAm6iHECEKss"
+    },
+    {
+      "subCategory": "Livestock",
+      "canonicalLabel": "Horse neighing",
+      "url": "https://youtube.com/shorts/3BW1lBgtbbs?si=2ul2QzVPfpgl2yYo"
+    },
+    {
+      "subCategory": "Bird",
+      "canonicalLabel": "Rooster crowing",
+      "url": "https://youtube.com/shorts/0-YvSuXm4q0?si=MLyU-GbslREvoqgH"
+    },
+    {
+      "subCategory": "Bird",
+      "canonicalLabel": "Crow cawing",
+      "url": "https://youtube.com/shorts/FF81PxzGJao?si=Km6jZJHPHTrkxeGE"
+    },
+    {
+      "subCategory": "Livestock",
+      "canonicalLabel": "Goat sound",
+      "url": "https://youtube.com/shorts/i4dKc9QsPEw?si=iOYgUwQaC7i56Wyd"
+    },
+    {
+      "subCategory": "Livestock",
+      "canonicalLabel": "Donkey braying",
+      "url": "https://youtube.com/shorts/Z_TASwncqek?si=uw8MhvocK3y51o-f"
+    },
+    {
+      "subCategory": "Insect",
+      "canonicalLabel": "Cricket chirping",
+      "url": "https://youtube.com/shorts/2wsn3xoUV48?si=NNlmeWEs712zi-E7"
+    },
+    {
+      "subCategory": "Bird",
+      "canonicalLabel": "Chicken Clucking",
+      "url": "https://youtube.com/shorts/0V8wTdDm6EI?si=VPar0lSGEQy0a12T"
+    },
+    {
+      "subCategory": "Dog",
+      "canonicalLabel": "Dog whining",
+      "url": "https://youtube.com/shorts/1AmOFDv45Oc?si=JAhHmxvVihSXKbGv"
+    },
+    {
+      "subCategory": "Dog",
+      "canonicalLabel": "Dog panting",
+      "url": "https://youtube.com/shorts/-dPznmCELu8?si=7qZU1LOh67sJ6PQ3"
+    },
+    {
+      "subCategory": "Dog",
+      "canonicalLabel": "Panting",
+      "url": "https://youtube.com/shorts/-dPznmCELu8?si=7qZU1LOh67sJ6PQ3",
+      "note": "Duplicate entry - same URL as Dog panting"
+    }
+  ]
+}

@@ -1,0 +1,70 @@
+{
+  "category": "Nature and Environmental Sounds",
+  "labels": [
+    {
+      "subCategory": "Weather",
+      "canonicalLabel": "Thunder",
+      "url": "https://youtu.be/ngWnFJ4iqMw?si=cB18nu-F_jMS5Ju2"
+    },
+    {
+      "subCategory": "Weather",
+      "canonicalLabel": "Wind howling",
+      "url": "https://youtu.be/RoNpHvuhLUQ?si=yTPeQovPqIETzdp8"
+    },
+    {
+      "subCategory": "Weather",
+      "canonicalLabel": "Rain pattering",
+      "url": "https://youtu.be/C-hzP3mOBGY?si=nDuCyfspuV1s_QYe"
+    },
+    {
+      "subCategory": "Weather",
+      "canonicalLabel": "Hail",
+      "url": "https://youtu.be/f-_mk9x5vzE?si=4S2xY_nn_k4qTHQa&t=12"
+    },
+    {
+      "subCategory": "Geophysical",
+      "canonicalLabel": "Avalanche rumble",
+      "url": "https://youtu.be/iVXvGgdwTDQ?si=6Aw1EArZPG6byr3o"
+    },
+    {
+      "subCategory": "Geophysical",
+      "canonicalLabel": "Earthquake rumble",
+      "url": "https://youtu.be/hqNFXbV3AgY?si=YxFCGqYmMrf1SBs-"
+    },
+    {
+      "subCategory": "Water body",
+      "canonicalLabel": "Wave crashing",
+      "url": "https://youtu.be/B3ZbsOhNTas?si=dlBKjm8-PoyCyOSR"
+    },
+    {
+      "subCategory": "Fire/vegetation",
+      "canonicalLabel": "Fire crackling",
+      "url": "https://youtu.be/kYU3jlhDb2M?si=W370jkHRXaO155nF"
+    },
+    {
+      "subCategory": "Vegetation",
+      "canonicalLabel": "Rustling sound",
+      "url": "https://youtu.be/oHQFMa9ObZE?si=HRWpELQAH1t2gwsA"
+    },
+    {
+      "subCategory": "Water body",
+      "canonicalLabel": "Flowing water",
+      "url": "https://youtu.be/LID5iG6ozf4?si=oD5ov1PFviXVETuK"
+    },
+    {
+      "subCategory": "Water body",
+      "canonicalLabel": "Continuous water roar",
+      "url": "https://youtu.be/ZhTlQII7XBQ?si=b_kiSzjIz7tiD0qy"
+    },
+    {
+      "subCategory": "Water body",
+      "canonicalLabel": "Surf or rolling waves",
+      "url": "https://youtu.be/B3ZbsOhNTas?si=9H0v9pCn0EXGFuo3"
+    },
+    {
+      "subCategory": "Ice/natural material",
+      "canonicalLabel": "Cracking sound",
+      "url": "https://youtu.be/N3OA56rpVpE?si=zM4kOf0rYL4uLW7E"
+    }
+  ]
+}

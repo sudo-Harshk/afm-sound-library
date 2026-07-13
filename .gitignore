@@ -41,5 +41,13 @@ lerna-debug.log*
 .DS_Store
 Thumbs.db
 
+# Python
+.venv/
+
+# Downloaded audio (large binaries — use scripts to regenerate)
+sound-urls/*/masters/
+sound-urls/*/web/
+download-errors.log
+
 # Claude Code local settings
 .claude/settings.local.json

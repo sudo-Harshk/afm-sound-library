@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { getYouTubeId, getDomainName, isValidUrl, isAllowedDomain } from '../lib/refs';
+import { getYouTubeId, getDomainName, isValidUrl, isAllowedDomain, groupReferences } from '../lib/refs';
 import { getCategoryIcon } from '../lib/icons';
 
 export default function DetailPanel({ sound, onClose, onAddReference }) {
@@ -132,30 +132,56 @@ export default function DetailPanel({ sound, onClose, onAddReference }) {
               {references.length === 0 ? (
                 <p className="text-[13px] text-ink-faint">No references yet.</p>
               ) : (
-                <div className="space-y-2">
-                  {references.map((ref, i) => {
-                    const ytId = getYouTubeId(ref.url);
-                    return (
-                      <button
-                        key={i}
-                        onClick={() => {
-                          if (ytId) {
-                            window.open(ref.url, '_blank', 'noopener,noreferrer');
-                          } else {
-                            window.open(ref.url, '_blank', 'noopener,noreferrer');
-                          }
-                        }}
-                        className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg border border-line text-[13px] font-medium text-ink-soft hover:border-accent/50 hover:text-accent transition-colors"
-                      >
-                        <span className="w-5 h-5 rounded-full bg-accent-soft flex items-center justify-center text-accent shrink-0">
-                          <span className="material-symbols-outlined text-[14px]">
-                            {ytId ? 'play_arrow' : 'open_in_new'}
-                          </span>
-                        </span>
-                        {getDomainName(ref.url)}
-                      </button>
-                    );
-                  })}
+                <div className="space-y-4">
+                  {(() => {
+                    const groups = groupReferences(references);
+                    const sections = [
+                      { key: 'youtube', title: 'YouTube', icon: 'play_circle', refs: groups.youtube },
+                      { key: 'audio', title: 'Audio', icon: 'audio_file', refs: groups.audio },
+                      { key: 'other', title: 'Other', icon: 'link', refs: groups.other },
+                    ].filter((s) => s.refs.length > 0);
+                    return sections.map((section) => (
+                      <div key={section.key} className="space-y-2">
+                        <p className="text-[11px] font-medium text-ink-faint">
+                          {section.title}{' '}
+                          <span className="text-ink-faint/50">({section.refs.length})</span>
+                        </p>
+                        <div className="space-y-2">
+                          {section.key === 'audio' ? (
+                            section.refs.map((ref, i) => (
+                              <div
+                                key={i}
+                                className="w-full px-3 py-2 rounded-lg border border-line"
+                              >
+                                <p className="text-[11px] text-ink-faint mb-1.5 truncate">{ref.url}</p>
+                                <audio controls preload="none" className="w-full h-8">
+                                  <source src={ref.url} />
+                                </audio>
+                              </div>
+                            ))
+                          ) : (
+                            section.refs.map((ref, i) => {
+                              const ytId = ref.youtubeId || getYouTubeId(ref.url);
+                              return (
+                                <button
+                                  key={i}
+                                  onClick={() => window.open(ref.url, '_blank', 'noopener,noreferrer')}
+                                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg border border-line text-[13px] font-medium text-ink-soft hover:border-accent/50 hover:text-accent transition-colors"
+                                >
+                                  <span className="w-5 h-5 rounded-full bg-accent-soft flex items-center justify-center text-accent shrink-0">
+                                    <span className="material-symbols-outlined text-[14px]">
+                                      {ytId ? 'play_circle' : 'open_in_new'}
+                                    </span>
+                                  </span>
+                                  {getDomainName(ref.url)}
+                                </button>
+                              );
+                            })
+                          )}
+                        </div>
+                      </div>
+                    ));
+                  })()}
                 </div>
               )}
             </div>

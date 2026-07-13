@@ -1,0 +1,35 @@
+{
+  "category": "Social and Crowd Sounds",
+  "labels": [
+    {
+      "subCategory": "Audience",
+      "canonicalLabel": "Applause",
+      "url": "https://youtu.be/barWV7RWkq0?si=lLDof2XabngFQKhY"
+    },
+    {
+      "subCategory": "Audience",
+      "canonicalLabel": "Cheering",
+      "url": "https://youtube.com/shorts/L6--pamzt1Y?si=tD5M6exTSv22A7dr"
+    },
+    {
+      "subCategory": "Audience",
+      "canonicalLabel": "Booing",
+      "url": "https://youtu.be/WVvAASu-moA?si=tCfDuFxkZzg8KUEj"
+    },
+    {
+      "subCategory": "Group vocal",
+      "canonicalLabel": "Chanting",
+      "url": "https://youtu.be/vYZU9PRGu54?si=BYCFj004Cop84Wkv"
+    },
+    {
+      "subCategory": "Crowd bed",
+      "canonicalLabel": "Crowd Murmur",
+      "url": "https://youtu.be/jua-dkYi-rU?si=A5pLCtALk41_H3Zi"
+    },
+    {
+      "subCategory": "Crowd expression",
+      "canonicalLabel": "Crowd Laughter",
+      "url": "https://youtube.com/shorts/GKRvXTnoKaI?si=A8V4XKzZaKh1ivCu"
+    }
+  ]
+}

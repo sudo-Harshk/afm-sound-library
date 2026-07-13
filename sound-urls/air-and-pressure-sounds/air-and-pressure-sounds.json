@@ -1,0 +1,40 @@
+{
+  "category": "Air and Pressure Sounds",
+  "labels": [
+    {
+      "subCategory": "Gas release",
+      "canonicalLabel": "Hiss",
+      "url": "https://www.youtube.com/shorts/kYGC8d1HApo"
+    },
+    {
+      "subCategory": "Fast air flow",
+      "canonicalLabel": "Whoosh",
+      "url": "https://www.youtube.com/shorts/XgR7m4VJhIg"
+    },
+    {
+      "subCategory": "Short airflow",
+      "canonicalLabel": "Puff",
+      "url": "https://www.youtube.com/watch?v=aU4rdmAKvBU"
+    },
+    {
+      "subCategory": "Aperture tone",
+      "canonicalLabel": "Whistling air flow",
+      "url": "https://www.youtube.com/watch?v=3awXvBG4emo"
+    },
+    {
+      "subCategory": "Steam/gas",
+      "canonicalLabel": "Pressure release hiss",
+      "url": "https://youtube.com/shorts/usXWuY0tXA4?si=K16KGjcp_vW72LND"
+    },
+    {
+      "subCategory": "Leak",
+      "canonicalLabel": "Hissing sounds",
+      "url": "https://www.youtube.com/watch?v=n5-IUK6EVS4"
+    },
+    {
+      "subCategory": "Deflation",
+      "canonicalLabel": "Deflation hiss or whoosh",
+      "url": "https://www.youtube.com/watch?v=FW82gDo5orM"
+    }
+  ]
+}

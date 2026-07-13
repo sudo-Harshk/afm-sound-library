@@ -1,0 +1,85 @@
+{
+  "category": "Impact and Collision Sounds",
+  "labels": [
+    {
+      "subCategory": "Heavy impact",
+      "canonicalLabel": "Thud",
+      "url": "https://youtu.be/FIcf2GJakRs?si=j12o6mIxJ_rxxVh2"
+    },
+    {
+      "subCategory": "Deliberate strike",
+      "canonicalLabel": "Knock",
+      "url": "https://www.youtube.com/shorts/iuYS5eQF0zM"
+    },
+    {
+      "subCategory": "Loud impact",
+      "canonicalLabel": "Bang",
+      "url": "https://www.youtube.com/watch?v=SeFxj_8fgJ8"
+    },
+    {
+      "subCategory": "Multi-object collision",
+      "canonicalLabel": "Crash",
+      "url": "https://youtu.be/6kRtNjstvzU?si=IjojWCFFSqPW93r-"
+    },
+    {
+      "subCategory": "Metal impact",
+      "canonicalLabel": "Clang",
+      "url": "https://www.youtube.com/watch?v=ne-RUIRwE88"
+    },
+    {
+      "subCategory": "Multiple small impacts",
+      "canonicalLabel": "Clatter",
+      "url": "https://www.youtube.com/watch?v=dv-kIKwT6u0"
+    },
+    {
+      "subCategory": "Muffled impact",
+      "canonicalLabel": "Thump",
+      "url": "https://www.youtube.com/watch?v=2wYeNjhfEb0"
+    },
+    {
+      "subCategory": "Small mechanism",
+      "canonicalLabel": "Click",
+      "url": "https://www.youtube.com/shorts/bigj8TSkS-g"
+    },
+    {
+      "subCategory": "Fracture",
+      "canonicalLabel": "Crack",
+      "url": "https://youtu.be/NNbpASqZk6A?si=BWIjZJT-MNOyXFbt"
+    },
+    {
+      "subCategory": "Burst",
+      "canonicalLabel": "Pop",
+      "url": "https://www.youtube.com/watch?v=JyG15UD7318"
+    },
+    {
+      "subCategory": "Flat contact",
+      "canonicalLabel": "Smack or slap",
+      "url": "https://www.youtube.com/watch?v=6Lp844nMKzA"
+    },
+    {
+      "subCategory": "Door impact",
+      "canonicalLabel": "Slam or bang",
+      "url": "https://youtu.be/Z8vPFgXKn3k?si=4ZgOb4RSMER2U_Cd"
+    },
+    {
+      "subCategory": "Object handling",
+      "canonicalLabel": "Drop impact",
+      "url": "https://youtu.be/wd-8TWmQ1Jg?si=zwz4gZrzKA32fXft"
+    },
+    {
+      "subCategory": "Large energy event",
+      "canonicalLabel": "Explosion",
+      "url": "https://youtu.be/SEEf3GJqnn4?si=i1CUuwGalNXctttU"
+    },
+    {
+      "subCategory": "Door mechanism",
+      "canonicalLabel": "Door opening or closing",
+      "url": "https://www.youtube.com/watch?v=iUYw61EhbgA"
+    },
+    {
+      "subCategory": "Breakage",
+      "canonicalLabel": "Glass shattering",
+      "url": "https://www.youtube.com/watch?v=TcnufvBffcY"
+    }
+  ]
+}
