@@ -28,10 +28,15 @@ export default function TopBar({ query, onQueryChange, totalSounds, totalCategor
           placeholder="Search sounds..."
           className="w-full h-10 pl-10 pr-16 bg-surface-container border border-line rounded-lg text-[13px] text-ink placeholder-ink-faint focus:outline-none focus:border-accent transition-all"
         />
-        <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1 opacity-50 pointer-events-none">
-          <span className="px-1.5 py-0.5 rounded border border-line text-[11px] text-ink-faint font-mono">&#8984;</span>
-          <span className="px-1.5 py-0.5 rounded border border-line text-[11px] text-ink-faint font-mono">K</span>
-        </div>
+        {query && (
+          <button
+            onClick={() => onQueryChange('')}
+            className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-ink-faint hover:text-ink transition-colors"
+            aria-label="Clear search"
+          >
+            <span className="material-symbols-outlined text-[18px]">close</span>
+          </button>
+        )}
       </div>
 
       {(totalSounds != null || totalCategories != null) && (
