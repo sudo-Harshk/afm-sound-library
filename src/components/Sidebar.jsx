@@ -19,7 +19,12 @@ export default function Sidebar({
       style={{ width }}
     >
       <div className="p-6">
-        <h1 className="text-[18px] font-semibold text-ink tracking-tight">AFM Sound Catalog</h1>
+        <div className="flex items-center gap-2.5">
+          <div className="w-7 h-7 rounded-lg bg-accent-soft flex items-center justify-center shrink-0">
+            <span className="material-symbols-outlined text-accent text-[16px]">graphic_eq</span>
+          </div>
+          <h1 className="text-[18px] font-semibold text-ink tracking-tight">AFM Sound Catalog</h1>
+        </div>
         <p className="text-[13px] text-ink-soft mt-1 opacity-70">Sound Taxonomy Reference</p>
       </div>
 
