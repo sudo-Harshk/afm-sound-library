@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { collection, onSnapshot, updateDoc, doc, arrayUnion } from 'firebase/firestore';
+import { collection, onSnapshot, updateDoc, doc, arrayUnion, arrayRemove } from 'firebase/firestore';
 import { db } from './firebase';
 import SearchBar from './components/SearchBar';
 import CategoryList from './components/CategoryList';
@@ -109,6 +109,13 @@ export default function App() {
     });
   }, []);
 
+  const handleDeleteReference = useCallback(async (soundId, ref) => {
+    const soundRef = doc(db, 'sounds', soundId);
+    await updateDoc(soundRef, {
+      references: arrayRemove(ref),
+    });
+  }, []);
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-paper">
@@ -160,7 +167,7 @@ export default function App() {
         <main className="max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-14">
           <SearchBar query={query} onQueryChange={setQuery} />
           <div className="mt-6 sm:mt-8">
-            {renderContent(isSearching, searchResults, activeCategory, categorySounds, categories, setActiveCategory, handleAddReference)}
+            {renderContent(isSearching, searchResults, activeCategory, categorySounds, categories, setActiveCategory, handleAddReference, handleDeleteReference)}
           </div>
         </main>
       </div>
@@ -210,15 +217,16 @@ export default function App() {
           sound={selectedSound}
           onClose={() => setSelectedSound(null)}
           onAddReference={handleAddReference}
+          onDeleteReference={handleDeleteReference}
         />
       )}
     </div>
   );
 }
 
-function renderContent(isSearching, searchResults, activeCategory, categorySounds, categories, setActiveCategory, handleAddReference) {
+function renderContent(isSearching, searchResults, activeCategory, categorySounds, categories, setActiveCategory, handleAddReference, handleDeleteReference) {
   if (isSearching) {
-    return <LabelList sounds={searchResults} onAddReference={handleAddReference} />;
+    return <LabelList sounds={searchResults} onAddReference={handleAddReference} onDeleteReference={handleDeleteReference} />;
   }
   if (activeCategory) {
     return (
@@ -227,6 +235,7 @@ function renderContent(isSearching, searchResults, activeCategory, categorySound
         sounds={categorySounds}
         onBack={() => setActiveCategory(null)}
         onAddReference={handleAddReference}
+        onDeleteReference={handleDeleteReference}
       />
     );
   }

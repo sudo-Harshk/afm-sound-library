@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { getYouTubeId, getDomainName, isValidUrl, isAllowedDomain, groupReferences } from '../lib/refs';
 import { getCategoryIcon } from '../lib/icons';
 
-export default function DetailPanel({ sound, onClose, onAddReference }) {
+export default function DetailPanel({ sound, onClose, onAddReference, onDeleteReference }) {
   const [adding, setAdding] = useState(false);
   const [url, setUrl] = useState('');
   const [error, setError] = useState('');
@@ -32,6 +32,15 @@ export default function DetailPanel({ sound, onClose, onAddReference }) {
       setError('Failed to add — try again');
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleDelete = async (ref) => {
+    if (!window.confirm('Delete this reference?')) return;
+    try {
+      await onDeleteReference(sound.id, ref);
+    } catch {
+      // silent — onSnapshot will reflect current state
     }
   };
 
@@ -153,7 +162,16 @@ export default function DetailPanel({ sound, onClose, onAddReference }) {
                                 key={i}
                                 className="w-full px-3 py-2 rounded-lg border border-line"
                               >
-                                <p className="text-[11px] text-ink-faint mb-1.5 truncate">{ref.url}</p>
+                                <div className="flex items-center justify-between gap-2 mb-1.5">
+                                  <p className="text-[11px] text-ink-faint truncate min-w-0">{ref.url}</p>
+                                  <button
+                                    onClick={() => handleDelete(ref)}
+                                    className="shrink-0 p-1 rounded hover:bg-red-500/10 text-ink-faint hover:text-red-500 transition-colors"
+                                    title="Delete reference"
+                                  >
+                                    <span className="material-symbols-outlined text-[14px]">close</span>
+                                  </button>
+                                </div>
                                 <audio controls preload="none" className="w-full h-8">
                                   <source src={ref.url} />
                                 </audio>
@@ -163,18 +181,26 @@ export default function DetailPanel({ sound, onClose, onAddReference }) {
                             section.refs.map((ref, i) => {
                               const ytId = ref.youtubeId || getYouTubeId(ref.url);
                               return (
-                                <button
-                                  key={i}
-                                  onClick={() => window.open(ref.url, '_blank', 'noopener,noreferrer')}
-                                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg border border-line text-[13px] font-medium text-ink-soft hover:border-accent/50 hover:text-accent transition-colors"
-                                >
-                                  <span className="w-5 h-5 rounded-full bg-accent-soft flex items-center justify-center text-accent shrink-0">
-                                    <span className="material-symbols-outlined text-[14px]">
-                                      {ytId ? 'play_circle' : 'open_in_new'}
+                                <div key={i} className="flex items-center gap-2">
+                                  <button
+                                    onClick={() => window.open(ref.url, '_blank', 'noopener,noreferrer')}
+                                    className="flex-1 min-w-0 flex items-center gap-2.5 px-3 py-2 rounded-lg border border-line text-[13px] font-medium text-ink-soft hover:border-accent/50 hover:text-accent transition-colors"
+                                  >
+                                    <span className="w-5 h-5 rounded-full bg-accent-soft flex items-center justify-center text-accent shrink-0">
+                                      <span className="material-symbols-outlined text-[14px]">
+                                        {ytId ? 'play_circle' : 'open_in_new'}
+                                      </span>
                                     </span>
-                                  </span>
-                                  {getDomainName(ref.url)}
-                                </button>
+                                    {getDomainName(ref.url)}
+                                  </button>
+                                  <button
+                                    onClick={() => handleDelete(ref)}
+                                    className="shrink-0 p-1.5 rounded hover:bg-red-500/10 text-ink-faint hover:text-red-500 transition-colors"
+                                    title="Delete reference"
+                                  >
+                                    <span className="material-symbols-outlined text-[16px]">close</span>
+                                  </button>
+                                </div>
                               );
                             })
                           )}

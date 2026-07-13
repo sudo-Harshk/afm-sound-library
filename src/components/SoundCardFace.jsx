@@ -5,7 +5,7 @@ import { getCategoryIcon } from '../lib/icons';
 
 const VISIBLE_CHIPS = 3;
 
-export default function SoundCardFace({ sound, isFront, onAddReference, onLockDrag }) {
+export default function SoundCardFace({ sound, isFront, onAddReference, onDeleteReference, onLockDrag }) {
   const [playingUrl, setPlayingUrl] = useState(null);
   const [detailOpen, setDetailOpen] = useState(false);
   const [adding, setAdding] = useState(false);
@@ -46,6 +46,15 @@ export default function SoundCardFace({ sound, isFront, onAddReference, onLockDr
       setError('Failed to add — try again');
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleDelete = async (ref) => {
+    if (!window.confirm('Delete this reference?')) return;
+    try {
+      await onDeleteReference(sound.id, ref);
+    } catch {
+      // silent
     }
   };
 
@@ -170,7 +179,17 @@ export default function SoundCardFace({ sound, isFront, onAddReference, onLockDr
                           key={i}
                           className="w-full px-3 py-2 rounded-lg border border-line"
                         >
-                          <p className="text-[10px] text-ink-faint mb-1 truncate">{ref.url}</p>
+                          <div className="flex items-center justify-between gap-2 mb-1">
+                            <p className="text-[10px] text-ink-faint truncate min-w-0">{ref.url}</p>
+                            <button
+                              onPointerDownCapture={stop}
+                              onClick={(e) => { e.stopPropagation(); handleDelete(ref); }}
+                              className="shrink-0 p-0.5 rounded hover:bg-red-500/10 text-ink-faint hover:text-red-500 transition-colors"
+                              title="Delete reference"
+                            >
+                              <X className="w-3 h-3" />
+                            </button>
+                          </div>
                           <audio controls preload="none" className="w-full h-7">
                             <source src={ref.url} />
                           </audio>
@@ -181,22 +200,32 @@ export default function SoundCardFace({ sound, isFront, onAddReference, onLockDr
                         const ytId = ref.youtubeId || getYouTubeId(ref.url);
                         const isPlaying = playingUrl === ref.url;
                         return (
-                          <button
-                            key={i}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              if (ytId) setPlayingUrl(isPlaying ? null : ref.url);
-                              else window.open(ref.url, '_blank', 'noopener,noreferrer');
-                            }}
-                            className={`w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg border text-xs font-medium transition-colors duration-150 ${
-                              isPlaying ? 'border-accent text-accent bg-accent-soft' : 'border-line text-ink-soft hover:border-accent/50 hover:text-accent'
-                            }`}
-                          >
-                            <span className="w-4 h-4 rounded-full bg-accent-soft flex items-center justify-center text-accent shrink-0">
-                              {ytId ? <Play className="w-2.5 h-2.5 ml-0.5" /> : <ExternalLink className="w-2.5 h-2.5" />}
-                            </span>
-                            {getDomainName(ref.url)}
-                          </button>
+                          <div key={i} className="flex items-center gap-1">
+                            <button
+                              onPointerDownCapture={stop}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                if (ytId) setPlayingUrl(isPlaying ? null : ref.url);
+                                else window.open(ref.url, '_blank', 'noopener,noreferrer');
+                              }}
+                              className={`flex-1 min-w-0 flex items-center gap-2 px-2.5 py-1.5 rounded-lg border text-xs font-medium transition-colors duration-150 ${
+                                isPlaying ? 'border-accent text-accent bg-accent-soft' : 'border-line text-ink-soft hover:border-accent/50 hover:text-accent'
+                              }`}
+                            >
+                              <span className="w-4 h-4 rounded-full bg-accent-soft flex items-center justify-center text-accent shrink-0">
+                                {ytId ? <Play className="w-2.5 h-2.5 ml-0.5" /> : <ExternalLink className="w-2.5 h-2.5" />}
+                              </span>
+                              {getDomainName(ref.url)}
+                            </button>
+                            <button
+                              onPointerDownCapture={stop}
+                              onClick={(e) => { e.stopPropagation(); handleDelete(ref); }}
+                              className="shrink-0 p-1 rounded hover:bg-red-500/10 text-ink-faint hover:text-red-500 transition-colors"
+                              title="Delete reference"
+                            >
+                              <X className="w-3 h-3" />
+                            </button>
+                          </div>
                         );
                       })
                     )}

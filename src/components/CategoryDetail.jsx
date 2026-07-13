@@ -3,7 +3,7 @@ import { ArrowLeft, ChevronLeft, ChevronRight, Shuffle, RotateCcw } from 'lucide
 import CardStack from './ui/card-stack';
 import SoundCardFace from './SoundCardFace';
 
-export default function CategoryDetail({ category, sounds, onBack, onAddReference }) {
+export default function CategoryDetail({ category, sounds, onBack, onAddReference, onDeleteReference }) {
   const stackRef = useRef(null);
   const [index, setIndex] = useState(0);
 
@@ -41,7 +41,7 @@ export default function CategoryDetail({ category, sounds, onBack, onAddReferenc
           aspectRatio="4 / 5"
           onFrontChange={(_, idx) => setIndex(idx)}
           renderItem={(sound, isFront, setDragLocked) => (
-            <SoundCardFace sound={sound} isFront={isFront} onAddReference={onAddReference} onLockDrag={setDragLocked} />
+            <SoundCardFace sound={sound} isFront={isFront} onAddReference={onAddReference} onDeleteReference={onDeleteReference} onLockDrag={setDragLocked} />
           )}
         />
 

@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { ChevronDown, Plus, ExternalLink, Play } from 'lucide-react';
+import { ChevronDown, Plus, ExternalLink, Play, X } from 'lucide-react';
 import { getYouTubeId, getDomainName, isValidUrl, isAllowedDomain, groupReferences } from '../lib/refs';
 
-export default function LabelRow({ sound, showBreadcrumb = true, onAddReference }) {
+export default function LabelRow({ sound, showBreadcrumb = true, onAddReference, onDeleteReference }) {
   const [open, setOpen] = useState(false);
   const [playingUrl, setPlayingUrl] = useState(null);
   const [adding, setAdding] = useState(false);
@@ -29,6 +29,15 @@ export default function LabelRow({ sound, showBreadcrumb = true, onAddReference 
       setError('Failed to add — try again');
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleDelete = async (ref) => {
+    if (!window.confirm('Delete this reference?')) return;
+    try {
+      await onDeleteReference(sound.id, ref);
+    } catch {
+      // silent
     }
   };
 
@@ -74,7 +83,16 @@ export default function LabelRow({ sound, showBreadcrumb = true, onAddReference 
                         key={i}
                         className="w-full px-3 py-2 rounded-lg border border-line bg-paper-raised"
                       >
-                        <p className="text-[10px] text-ink-faint mb-1 truncate">{ref.url}</p>
+                        <div className="flex items-center justify-between gap-2 mb-1">
+                          <p className="text-[10px] text-ink-faint truncate min-w-0">{ref.url}</p>
+                          <button
+                            onClick={() => handleDelete(ref)}
+                            className="shrink-0 p-0.5 rounded hover:bg-red-500/10 text-ink-faint hover:text-red-500 transition-colors"
+                            title="Delete reference"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                        </div>
                         <audio controls preload="none" className="w-full h-7">
                           <source src={ref.url} />
                         </audio>
@@ -86,15 +104,24 @@ export default function LabelRow({ sound, showBreadcrumb = true, onAddReference 
                       const isPlaying = playingUrl === ref.url;
                       return (
                         <div key={i} className="space-y-2">
-                          <button
-                            onClick={() => ytId ? setPlayingUrl(isPlaying ? null : ref.url) : window.open(ref.url, '_blank', 'noopener,noreferrer')}
-                            className="inline-flex items-center gap-2 pl-1.5 pr-3 py-1.5 rounded-full border border-line bg-paper-raised text-xs font-medium text-ink-soft hover:border-accent/50 hover:text-accent transition-colors duration-150"
-                          >
-                            <span className="w-5 h-5 rounded-full bg-accent-soft flex items-center justify-center text-accent">
-                              {ytId ? <Play className="w-2.5 h-2.5 ml-0.5" /> : <ExternalLink className="w-2.5 h-2.5" />}
-                            </span>
-                            {getDomainName(ref.url)}
-                          </button>
+                          <div className="inline-flex items-center gap-2">
+                            <button
+                              onClick={() => ytId ? setPlayingUrl(isPlaying ? null : ref.url) : window.open(ref.url, '_blank', 'noopener,noreferrer')}
+                              className="inline-flex items-center gap-2 pl-1.5 pr-3 py-1.5 rounded-full border border-line bg-paper-raised text-xs font-medium text-ink-soft hover:border-accent/50 hover:text-accent transition-colors duration-150"
+                            >
+                              <span className="w-5 h-5 rounded-full bg-accent-soft flex items-center justify-center text-accent">
+                                {ytId ? <Play className="w-2.5 h-2.5 ml-0.5" /> : <ExternalLink className="w-2.5 h-2.5" />}
+                              </span>
+                              {getDomainName(ref.url)}
+                            </button>
+                            <button
+                              onClick={() => handleDelete(ref)}
+                              className="p-1 rounded hover:bg-red-500/10 text-ink-faint hover:text-red-500 transition-colors"
+                              title="Delete reference"
+                            >
+                              <X className="w-3 h-3" />
+                            </button>
+                          </div>
                           {isPlaying && ytId && (
                             <div className="relative w-full max-w-md aspect-video rounded-lg overflow-hidden border border-line shadow-[var(--shadow-card)]">
                               <iframe
