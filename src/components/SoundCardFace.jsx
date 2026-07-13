@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ExternalLink, Play, Plus, Info, X } from 'lucide-react';
-import { getYouTubeId, getDomainName, isValidUrl, isAllowedDomain, groupReferences } from '../lib/refs';
+import { getYouTubeId, getDomainName, isValidUrl, isAllowedDomain, groupReferences, hasReferenceUrl } from '../lib/refs';
 import { getCategoryIcon } from '../lib/icons';
 
 const VISIBLE_CHIPS = 3;
@@ -35,6 +35,7 @@ export default function SoundCardFace({ sound, isFront, onAddReference, onDelete
     if (!value) return setError('Enter a URL');
     if (!isValidUrl(value)) return setError('Enter a valid URL');
     if (!isAllowedDomain(value)) return setError('Domain not supported');
+    if (hasReferenceUrl(references, value)) return setError('This URL is already added');
 
     setSaving(true);
     try {
@@ -42,8 +43,8 @@ export default function SoundCardFace({ sound, isFront, onAddReference, onDelete
       setUrl('');
       setAdding(false);
       setError('');
-    } catch (err) {
-      setError(err?.message === 'duplicate' ? 'This URL is already added' : 'Failed to add — try again');
+    } catch {
+      setError('Failed to add — try again');
     } finally {
       setSaving(false);
     }

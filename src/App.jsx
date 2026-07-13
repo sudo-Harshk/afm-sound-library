@@ -104,13 +104,6 @@ export default function App() {
 
   const handleAddReference = useCallback(async (soundId, url) => {
     const soundRef = doc(db, 'sounds', soundId);
-    const snap = await getDoc(soundRef);
-    if (snap.exists()) {
-      const current = snap.data().references || [];
-      if (current.some((r) => r.url === url)) {
-        throw new Error('duplicate');
-      }
-    }
     await updateDoc(soundRef, {
       references: arrayUnion({ url, addedBy: 'user', addedAt: new Date().toISOString() }),
     });

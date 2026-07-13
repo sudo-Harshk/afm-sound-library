@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { ChevronDown, Plus, ExternalLink, Play, X } from 'lucide-react';
-import { getYouTubeId, getDomainName, isValidUrl, isAllowedDomain, groupReferences } from '../lib/refs';
+import { getYouTubeId, getDomainName, isValidUrl, isAllowedDomain, groupReferences, hasReferenceUrl } from '../lib/refs';
 
 export default function LabelRow({ sound, showBreadcrumb = true, onAddReference, onDeleteReference }) {
   const [open, setOpen] = useState(false);
@@ -18,6 +18,7 @@ export default function LabelRow({ sound, showBreadcrumb = true, onAddReference,
     if (!value) return setError('Enter a URL');
     if (!isValidUrl(value)) return setError('Enter a valid URL');
     if (!isAllowedDomain(value)) return setError('Domain not supported');
+    if (hasReferenceUrl(references, value)) return setError('This URL is already added');
 
     setSaving(true);
     try {
@@ -25,8 +26,8 @@ export default function LabelRow({ sound, showBreadcrumb = true, onAddReference,
       setUrl('');
       setAdding(false);
       setError('');
-    } catch (err) {
-      setError(err?.message === 'duplicate' ? 'This URL is already added' : 'Failed to add — try again');
+    } catch {
+      setError('Failed to add — try again');
     } finally {
       setSaving(false);
     }

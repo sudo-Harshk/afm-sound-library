@@ -357,4 +357,57 @@ describe('hasReferenceUrl', () => {
     ];
     expect(hasReferenceUrl(refs, 'https://www.youtube.com/watch?v=abc12345678')).toBe(true);
   });
+
+  it('detects duplicate when same user pastes same URL twice', () => {
+    const refs = [
+      { url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', addedBy: 'user', addedAt: '2025-07-13T10:00:00Z' },
+    ];
+    expect(hasReferenceUrl(refs, 'https://www.youtube.com/watch?v=dQw4w9WgXcQ')).toBe(true);
+  });
+
+  it('does NOT treat different YouTube formats as duplicates', () => {
+    const refs = [
+      { url: 'https://www.youtube.com/watch?v=abc12345678' },
+    ];
+    expect(hasReferenceUrl(refs, 'https://youtu.be/abc12345678')).toBe(false);
+  });
+
+  it('detects duplicate with trailing slash difference', () => {
+    const refs = [
+      { url: 'https://pixabay.com/sound-effects/rattle-457080/' },
+    ];
+    expect(hasReferenceUrl(refs, 'https://pixabay.com/sound-effects/rattle-457080')).toBe(false);
+  });
+
+  it('detects duplicate URL with query params vs without', () => {
+    const refs = [
+      { url: 'https://www.youtube.com/watch?v=abc12345678' },
+    ];
+    expect(hasReferenceUrl(refs, 'https://www.youtube.com/watch?v=abc12345678&si=xyz')).toBe(false);
+  });
+
+  it('detects duplicate across multiple existing references', () => {
+    const refs = [
+      { url: 'https://www.youtube.com/watch?v=aaa11111111' },
+      { url: 'https://www.youtube.com/watch?v=bbb22222222' },
+      { url: 'https://www.youtube.com/watch?v=ccc33333333' },
+    ];
+    expect(hasReferenceUrl(refs, 'https://www.youtube.com/watch?v=bbb22222222')).toBe(true);
+    expect(hasReferenceUrl(refs, 'https://www.youtube.com/watch?v=ddd44444444')).toBe(false);
+  });
+
+  it('detects Pixabay URL duplicate', () => {
+    const refs = [
+      { url: 'https://pixabay.com/sound-effects/rattle-sound-457080/', addedBy: 'user' },
+    ];
+    expect(hasReferenceUrl(refs, 'https://pixabay.com/sound-effects/rattle-sound-457080/')).toBe(true);
+  });
+
+  it('detects audio file URL duplicate', () => {
+    const refs = [
+      { url: 'https://r2.dev/audio/dog-barking.mp3', addedBy: 'user' },
+    ];
+    expect(hasReferenceUrl(refs, 'https://r2.dev/audio/dog-barking.mp3')).toBe(true);
+    expect(hasReferenceUrl(refs, 'https://r2.dev/audio/cat-meowing.mp3')).toBe(false);
+  });
 });
