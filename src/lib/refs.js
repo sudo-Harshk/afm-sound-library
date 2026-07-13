@@ -69,7 +69,7 @@ export function searchSounds(sounds, query) {
     if (label === q) score = 4;
     else if (label.startsWith(q)) score = 3;
     else if (label.includes(q)) score = 2;
-    else if ((s.subcategory || '').toLowerCase().includes(q) || (s.section || '').toLowerCase().includes(q)) score = 1;
+    else if ((s.subcategory || '').toLowerCase().includes(q)) score = 1;
 
     if (score > 0) scored.push({ sound: s, score });
   }
