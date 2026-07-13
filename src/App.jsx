@@ -49,6 +49,13 @@ export default function App() {
   const [activeCategory, setActiveCategory] = useState(null);
   const [selectedSound, setSelectedSound] = useState(null);
   const { theme, toggle: toggleTheme } = useTheme();
+
+  useEffect(() => {
+    if (selectedSound) {
+      const updated = sounds.find((s) => s.id === selectedSound.id);
+      if (updated) setSelectedSound(updated);
+    }
+  }, [sounds]);
   const { width: sidebarWidth, isDragging: isSidebarDragging, startDrag: startSidebarDrag, resetWidth: resetSidebarWidth } = useSidebarWidth();
 
   useEffect(() => {
