@@ -2,12 +2,12 @@ import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyC9NN6pPcRSrW7tRioJg8phwXXdF44ojtY",
-  authDomain: "afm-sound-library.firebaseapp.com",
-  projectId: "afm-sound-library",
-  storageBucket: "afm-sound-library.firebasestorage.app",
-  messagingSenderId: "914724396864",
-  appId: "1:914724396864:web:eb5f04fa30aa99453ce4a5"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
 const app = initializeApp(firebaseConfig);

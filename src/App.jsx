@@ -48,6 +48,11 @@ export default function App() {
   const [query, setQuery] = useState(getInitialQuery);
   const [activeCategory, setActiveCategory] = useState(null);
   const [selectedSound, setSelectedSound] = useState(null);
+
+  const handleSelectCategory = useCallback((cat) => {
+    setActiveCategory(cat);
+    setQuery('');
+  }, []);
   const { theme, toggle: toggleTheme } = useTheme();
 
   useEffect(() => {
@@ -139,7 +144,7 @@ export default function App() {
       <Sidebar
         categories={categories}
         activeCategory={activeCategory}
-        onSelectCategory={setActiveCategory}
+        onSelectCategory={handleSelectCategory}
         theme={theme}
         onToggleTheme={toggleTheme}
         width={sidebarWidth}
@@ -174,7 +179,7 @@ export default function App() {
         <main className="max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-14">
           <SearchBar query={query} onQueryChange={setQuery} />
           <div className="mt-6 sm:mt-8">
-            {renderContent(isSearching, searchResults, activeCategory, categorySounds, categories, setActiveCategory, handleAddReference, handleDeleteReference)}
+            {renderContent(isSearching, searchResults, activeCategory, categorySounds, categories, handleSelectCategory, handleAddReference, handleDeleteReference)}
           </div>
         </main>
       </div>
@@ -188,7 +193,7 @@ export default function App() {
         <main className="flex-1 overflow-y-auto p-6">
             <Breadcrumb
               items={[
-                { label: 'All Categories', onClick: () => setActiveCategory(null) },
+                { label: 'All Categories', onClick: () => handleSelectCategory(null) },
                 ...(activeCategory ? [{ label: activeCategory }] : []),
                 ...(isSearching ? [{ label: `Search: ${query}` }] : []),
               ]}
@@ -231,7 +236,7 @@ export default function App() {
   );
 }
 
-function renderContent(isSearching, searchResults, activeCategory, categorySounds, categories, setActiveCategory, handleAddReference, handleDeleteReference) {
+function renderContent(isSearching, searchResults, activeCategory, categorySounds, categories, handleSelectCategory, handleAddReference, handleDeleteReference) {
   if (isSearching) {
     return <LabelList sounds={searchResults} onAddReference={handleAddReference} onDeleteReference={handleDeleteReference} />;
   }
@@ -241,7 +246,7 @@ function renderContent(isSearching, searchResults, activeCategory, categorySound
         <CategoryDetail
           category={activeCategory}
           sounds={categorySounds}
-          onBack={() => setActiveCategory(null)}
+          onBack={() => handleSelectCategory(null)}
           onAddReference={handleAddReference}
           onDeleteReference={handleDeleteReference}
         />
@@ -251,7 +256,7 @@ function renderContent(isSearching, searchResults, activeCategory, categorySound
   return (
     <>
       <h2 className="text-xs font-semibold uppercase tracking-wider text-ink-faint mb-3 lg:hidden">Browse by category</h2>
-      <CategoryList categories={categories} onSelect={setActiveCategory} />
+      <CategoryList categories={categories} onSelect={handleSelectCategory} />
     </>
   );
 }

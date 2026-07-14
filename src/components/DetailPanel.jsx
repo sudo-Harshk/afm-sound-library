@@ -99,46 +99,6 @@ export default function DetailPanel({ sound, onClose, onAddReference, onDeleteRe
               </span>
             </div>
 
-            {/* Metadata */}
-            <div className="space-y-3">
-              <h4 className="text-[11px] font-semibold uppercase tracking-widest text-ink-faint">Metadata</h4>
-              <div className="space-y-3">
-                <div className="p-3 bg-surface-container-low rounded border border-line">
-                  <p className="text-[11px] text-ink-faint mb-1">Typical Example</p>
-                  <p className="text-[13px] text-ink">{sound.typicalExample || '—'}</p>
-                </div>
-                <div className="p-3 bg-surface-container-low rounded border border-line">
-                  <p className="text-[11px] text-ink-faint mb-1">Acoustic Profile</p>
-                  <p className="text-[13px] text-ink">{sound.acousticProfile || '—'}</p>
-                </div>
-                <div className="p-3 bg-surface-container-low rounded border border-line">
-                  <p className="text-[11px] text-ink-faint mb-1">Confusable Labels</p>
-                  <p className="text-[13px] text-ink">{sound.confusableLabels || '—'}</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Taxonomy path */}
-            <div className="space-y-3">
-              <h4 className="text-[11px] font-semibold uppercase tracking-widest text-ink-faint">Taxonomy Path</h4>
-              <div className="space-y-2 ml-1">
-                <div className="flex items-center gap-3">
-                  <div className="w-1.5 h-1.5 rounded-full bg-ink-faint" />
-                  <span className="text-[13px] text-ink">{sound.section}</span>
-                </div>
-                {sound.subcategory && (
-                  <div className="flex items-center gap-3 ml-4 border-l-2 border-line pl-4">
-                    <div className="w-1.5 h-1.5 rounded-full bg-ink-faint" />
-                    <span className="text-[13px] text-ink">{sound.subcategory}</span>
-                  </div>
-                )}
-                <div className="flex items-center gap-3 ml-4 border-l-2 border-accent pl-4">
-                  <div className="w-2 h-2 rounded-full bg-accent" />
-                  <span className="text-[13px] font-semibold text-accent">{sound.canonicalLabel}</span>
-                </div>
-              </div>
-            </div>
-
             {/* References list */}
             <div className="space-y-3">
               <h4 className="text-[11px] font-semibold uppercase tracking-widest text-ink-faint">References</h4>
@@ -219,6 +179,46 @@ export default function DetailPanel({ sound, onClose, onAddReference, onDeleteRe
                   })()}
                 </div>
               )}
+            </div>
+
+            {/* Metadata */}
+            <div className="space-y-3">
+              <h4 className="text-[11px] font-semibold uppercase tracking-widest text-ink-faint">Metadata</h4>
+              <div className="space-y-3">
+                <div className="p-3 bg-surface-container-low rounded border border-line">
+                  <p className="text-[11px] text-ink-faint mb-1">Typical Example</p>
+                  <p className="text-[13px] text-ink">{sound.typicalExample || '—'}</p>
+                </div>
+                <div className="p-3 bg-surface-container-low rounded border border-line">
+                  <p className="text-[11px] text-ink-faint mb-1">Acoustic Profile</p>
+                  <p className="text-[13px] text-ink">{sound.acousticProfile || '—'}</p>
+                </div>
+                <div className="p-3 bg-surface-container-low rounded border border-line">
+                  <p className="text-[11px] text-ink-faint mb-1">Confusable Labels</p>
+                  <p className="text-[13px] text-ink">{sound.confusableLabels || '—'}</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Taxonomy path */}
+            <div className="space-y-3">
+              <h4 className="text-[11px] font-semibold uppercase tracking-widest text-ink-faint">Taxonomy Path</h4>
+              <div className="space-y-2 ml-1">
+                <div className="flex items-center gap-3">
+                  <div className="w-1.5 h-1.5 rounded-full bg-ink-faint" />
+                  <span className="text-[13px] text-ink">{sound.section}</span>
+                </div>
+                {sound.subcategory && (
+                  <div className="flex items-center gap-3 ml-4 border-l-2 border-line pl-4">
+                    <div className="w-1.5 h-1.5 rounded-full bg-ink-faint" />
+                    <span className="text-[13px] text-ink">{sound.subcategory}</span>
+                  </div>
+                )}
+                <div className="flex items-center gap-3 ml-4 border-l-2 border-accent pl-4">
+                  <div className="w-2 h-2 rounded-full bg-accent" />
+                  <span className="text-[13px] font-semibold text-accent">{sound.canonicalLabel}</span>
+                </div>
+              </div>
             </div>
 
             {/* Add reference form */}
