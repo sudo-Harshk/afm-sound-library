@@ -94,9 +94,10 @@ export default function HelpTour({ onClose, sounds, setSelectedSound, onQueryCha
   const typeTimerRef = useRef(null);
 
   const current = allSteps[step];
+  const prevStep = prevStepRef.current;
 
   const isPanelStep = step >= PANEL_START && step < PANEL_END;
-  const wasPanelStep = prevStepRef.current >= PANEL_START && prevStepRef.current < PANEL_END;
+  const wasPanelStep = prevStep >= PANEL_START && prevStep < PANEL_END;
   const enteringPanel = isPanelStep && !wasPanelStep;
 
   const cleanup = useCallback(() => {
@@ -127,20 +128,23 @@ export default function HelpTour({ onClose, sounds, setSelectedSound, onQueryCha
 
   useEffect(() => {
     if (current.action === 'typeSearch') {
-      const input = document.querySelector('[data-tour="search"] input');
-      if (input) {
-        input.focus();
-        let i = 0;
-        const typeNext = () => {
-          if (i <= SEARCH_QUERY.length) {
-            const text = SEARCH_QUERY.slice(0, i);
-            requestAnimationFrame(() => onQueryChange(text));
-            i++;
-            typeTimerRef.current = setTimeout(typeNext, 120);
-          }
-        };
-        typeNext();
-      }
+      const startDelay = setTimeout(() => {
+        const input = document.querySelector('[data-tour="search"] input');
+        if (input) {
+          input.focus();
+          let i = 0;
+          const typeNext = () => {
+            if (i <= SEARCH_QUERY.length) {
+              const text = SEARCH_QUERY.slice(0, i);
+              requestAnimationFrame(() => onQueryChange(text));
+              i++;
+              typeTimerRef.current = setTimeout(typeNext, 120);
+            }
+          };
+          typeNext();
+        }
+      }, 300);
+      return () => clearTimeout(startDelay);
     }
     return () => {
       if (typeTimerRef.current) clearTimeout(typeTimerRef.current);
@@ -222,7 +226,7 @@ export default function HelpTour({ onClose, sounds, setSelectedSound, onQueryCha
     if (current.target) {
       const el = document.querySelector(current.target);
       if (el && isPanelStep) {
-        const goingBack = step < prevStepRef.current;
+        const goingBack = step < prevStep;
         el.scrollIntoView({ behavior: 'smooth', block: goingBack ? 'nearest' : 'center' });
       }
     }
