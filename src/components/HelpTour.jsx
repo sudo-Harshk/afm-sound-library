@@ -226,8 +226,7 @@ export default function HelpTour({ onClose, sounds, setSelectedSound, onQueryCha
     if (current.target) {
       const el = document.querySelector(current.target);
       if (el && isPanelStep) {
-        const goingBack = step < prevStep;
-        el.scrollIntoView({ behavior: 'smooth', block: goingBack ? 'nearest' : 'center' });
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
     }
 
