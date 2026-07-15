@@ -226,7 +226,14 @@ export default function HelpTour({ onClose, sounds, setSelectedSound, onQueryCha
     if (current.target) {
       const el = document.querySelector(current.target);
       if (el && isPanelStep) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        const scrollContainer = el.closest('.overflow-y-auto');
+        if (scrollContainer) {
+          const elRect = el.getBoundingClientRect();
+          const containerRect = scrollContainer.getBoundingClientRect();
+          const offset = elRect.top - containerRect.top + scrollContainer.scrollTop;
+          const targetScroll = offset - scrollContainer.clientHeight / 2 + elRect.height / 2;
+          scrollContainer.scrollTo({ top: Math.max(0, targetScroll), behavior: 'smooth' });
+        }
       }
     }
 
