@@ -15,6 +15,7 @@ export default function Sidebar({
 
   return (
     <aside
+      data-tour="sidebar"
       className="hidden lg:flex fixed left-0 top-0 h-screen flex-col border-r border-line bg-paper z-50"
       style={{ width }}
     >
@@ -68,6 +69,7 @@ export default function Sidebar({
       <div className="mt-auto p-4 border-t border-line">
         <button
           onClick={onToggleTheme}
+          data-tour="theme"
           className="w-full flex items-center gap-3 px-4 py-2 text-[12px] font-medium text-ink-soft hover:bg-surface-container-high rounded transition-colors"
         >
           <span className="material-symbols-outlined text-[18px]">

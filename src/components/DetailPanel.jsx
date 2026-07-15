@@ -57,7 +57,7 @@ export default function DetailPanel({ sound, onClose, onAddReference, onDeleteRe
       />
 
       {/* Panel */}
-      <div className="fixed right-0 top-0 h-screen w-full max-w-[400px] bg-paper border-l border-line z-50 flex flex-col animate-slide-in-right shadow-2xl">
+      <div data-tour="detail-panel" className="fixed right-0 top-0 h-screen w-full max-w-[400px] bg-paper border-l border-line z-50 flex flex-col animate-slide-in-right shadow-2xl">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-line shrink-0">
           <h3 className="text-[18px] font-semibold text-ink">Label Details</h3>
@@ -72,7 +72,7 @@ export default function DetailPanel({ sound, onClose, onAddReference, onDeleteRe
         {/* Scrollable content */}
         <div className="flex-1 overflow-y-auto">
           {/* Media preview */}
-          <div className="w-full aspect-video bg-black relative">
+          <div data-tour="detail-media" className="w-full aspect-video bg-black relative">
             {activeYoutubeId ? (
               <iframe
                 src={`https://www.youtube.com/embed/${activeYoutubeId}?autoplay=${playingUrl ? '1' : '0'}&rel=0`}
@@ -90,7 +90,7 @@ export default function DetailPanel({ sound, onClose, onAddReference, onDeleteRe
             )}
           </div>
 
-          <div className="p-6 space-y-6">
+          <div className="p-6 pb-40 space-y-6">
             {/* Label details */}
             <div>
               <h2 className="text-[20px] font-semibold text-ink mb-2">{sound.canonicalLabel}</h2>
@@ -100,7 +100,7 @@ export default function DetailPanel({ sound, onClose, onAddReference, onDeleteRe
             </div>
 
             {/* References list */}
-            <div className="space-y-3">
+            <div data-tour="detail-references" className="space-y-3">
               <h4 className="text-[11px] font-semibold uppercase tracking-widest text-ink-faint">References</h4>
               {references.length === 0 ? (
                 <p className="text-[13px] text-ink-faint">No references yet.</p>
@@ -182,7 +182,7 @@ export default function DetailPanel({ sound, onClose, onAddReference, onDeleteRe
             </div>
 
             {/* Metadata */}
-            <div className="space-y-3">
+            <div data-tour="detail-metadata" className="space-y-3">
               <h4 className="text-[11px] font-semibold uppercase tracking-widest text-ink-faint">Metadata</h4>
               <div className="space-y-3">
                 <div className="p-3 bg-surface-container-low rounded border border-line">
@@ -201,7 +201,7 @@ export default function DetailPanel({ sound, onClose, onAddReference, onDeleteRe
             </div>
 
             {/* Taxonomy path */}
-            <div className="space-y-3">
+            <div data-tour="detail-taxonomy" className="space-y-3">
               <h4 className="text-[11px] font-semibold uppercase tracking-widest text-ink-faint">Taxonomy Path</h4>
               <div className="space-y-2 ml-1">
                 <div className="flex items-center gap-3">
@@ -222,7 +222,7 @@ export default function DetailPanel({ sound, onClose, onAddReference, onDeleteRe
             </div>
 
             {/* Add reference form */}
-            <div className="pt-4 border-t border-line">
+            <div data-tour="detail-addref" className="pt-4 border-t border-line">
               {adding ? (
                 <form onSubmit={submitReference} className="space-y-2">
                   <p className="text-[12px] text-ink-faint">Only YouTube or Pixabay links can be added.</p>

@@ -10,6 +10,7 @@ import TopBar from './components/TopBar';
 import DataTable from './components/DataTable';
 import Breadcrumb from './components/Breadcrumb';
 import DetailPanel from './components/DetailPanel';
+import HelpTour from './components/HelpTour';
 import { searchSounds, removeReferenceByUrl, hasReferenceUrl } from './lib/refs';
 import { useTheme } from './lib/useTheme';
 import { useSidebarWidth } from './lib/useSidebarWidth';
@@ -48,6 +49,7 @@ export default function App() {
   const [query, setQuery] = useState(getInitialQuery);
   const [activeCategory, setActiveCategory] = useState(null);
   const [selectedSound, setSelectedSound] = useState(null);
+  const [showTour, setShowTour] = useState(false);
 
   const handleSelectCategory = useCallback((cat) => {
     setActiveCategory(cat);
@@ -163,16 +165,25 @@ export default function App() {
               </div>
               <span className="text-[14px] font-semibold text-ink tracking-tight truncate">AFM Sound Catalog</span>
             </div>
-            <button
-              onClick={toggleTheme}
-              title={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
-              aria-label="Toggle theme"
-              className="shrink-0 w-9 h-9 rounded-full border border-line bg-paper flex items-center justify-center text-ink-soft hover:text-accent hover:border-accent/50 transition-colors duration-150"
-            >
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setShowTour(true)}
+                title="How to use"
+                className="hidden shrink-0 w-9 h-9 rounded-full border border-line bg-paper flex items-center justify-center text-ink-faint hover:text-accent hover:border-accent/50 transition-colors duration-150"
+              >
+                <span className="material-symbols-outlined text-[16px]">help_outline</span>
+              </button>
+              <button
+                onClick={toggleTheme}
+                title={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
+                aria-label="Toggle theme"
+                className="shrink-0 w-9 h-9 rounded-full border border-line bg-paper flex items-center justify-center text-ink-soft hover:text-accent hover:border-accent/50 transition-colors duration-150"
+              >
               <span className="material-symbols-outlined text-[16px]">
                 {theme === 'dark' ? 'light_mode' : 'dark_mode'}
               </span>
             </button>
+            </div>
           </div>
         </header>
 
@@ -189,7 +200,7 @@ export default function App() {
         className={`hidden lg:flex lg:flex-col lg:min-h-screen ${isSidebarDragging ? '' : 'transition-[margin-left] duration-100'}`}
         style={{ marginLeft: sidebarWidth }}
       >
-        <TopBar query={query} onQueryChange={setQuery} totalSounds={sounds.length} totalCategories={categories.length} />
+        <TopBar query={query} onQueryChange={setQuery} onHelpClick={() => setShowTour(true)} />
         <main className="flex-1 overflow-y-auto p-6">
             <Breadcrumb
               items={[
@@ -232,6 +243,9 @@ export default function App() {
           onDeleteReference={handleDeleteReference}
         />
       )}
+
+      {/* Help tour */}
+      {showTour && <HelpTour onClose={() => setShowTour(false)} sounds={sounds} setSelectedSound={setSelectedSound} onQueryChange={setQuery} />}
     </div>
   );
 }

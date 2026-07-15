@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 
-export default function TopBar({ query, onQueryChange }) {
+export default function TopBar({ query, onQueryChange, onHelpClick }) {
   const inputRef = useRef(null);
 
   useEffect(() => {
@@ -16,7 +16,7 @@ export default function TopBar({ query, onQueryChange }) {
 
   return (
     <header className="hidden lg:flex items-center h-16 px-6 sticky top-0 z-40 bg-paper/80 backdrop-blur-md border-b border-line">
-      <div className="relative w-full max-w-xl">
+      <div className="relative w-full max-w-xl" data-tour="search">
         <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-ink-faint pointer-events-none text-[20px]">
           search
         </span>
@@ -39,6 +39,13 @@ export default function TopBar({ query, onQueryChange }) {
         )}
       </div>
 
+      <button
+        onClick={onHelpClick}
+        title="How to use"
+        className="ml-3 shrink-0 w-9 h-9 rounded-full border border-line flex items-center justify-center text-ink-faint hover:text-accent hover:border-accent/50 transition-colors"
+      >
+        <span className="material-symbols-outlined text-[18px]">help_outline</span>
+      </button>
     </header>
   );
 }

@@ -65,7 +65,7 @@ export default function DataTable({ sounds, onRowClick }) {
   const fillerCount = totalPages > 1 ? pageSize - paged.length : 0;
 
   return (
-    <div>
+    <div data-tour="table">
       <div className="bg-paper border border-line rounded-xl overflow-hidden shadow-sm">
         <table className="w-full text-left border-collapse">
           <thead>

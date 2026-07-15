@@ -134,4 +134,13 @@
       'GRAD' 0,
       'opsz' 24;
   }
+
+  .tour-spotlight {
+    box-shadow: 0 0 0 4px rgba(47, 111, 94, 0.4), 0 0 0 9999px rgba(0, 0, 0, 0.5);
+    transition: all 0.3s ease;
+  }
+
+  .tour-tooltip {
+    transition: top 0.25s ease, left 0.25s ease, transform 0.25s ease;
+  }
 }
