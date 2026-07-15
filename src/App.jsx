@@ -10,7 +10,7 @@ import TopBar from './components/TopBar';
 import DataTable from './components/DataTable';
 import Breadcrumb from './components/Breadcrumb';
 import DetailPanel from './components/DetailPanel';
-import HelpTour from './components/HelpTour';
+const HelpTour = lazy(() => import('./components/HelpTour'));
 import { searchSounds, removeReferenceByUrl, hasReferenceUrl } from './lib/refs';
 import { useTheme } from './lib/useTheme';
 import { useSidebarWidth } from './lib/useSidebarWidth';
@@ -245,7 +245,11 @@ export default function App() {
       )}
 
       {/* Help tour */}
-      {showTour && <HelpTour onClose={() => setShowTour(false)} sounds={sounds} setSelectedSound={setSelectedSound} onQueryChange={setQuery} />}
+      {showTour && (
+        <Suspense fallback={null}>
+          <HelpTour onClose={() => setShowTour(false)} sounds={sounds} setSelectedSound={setSelectedSound} onQueryChange={setQuery} />
+        </Suspense>
+      )}
     </div>
   );
 }
