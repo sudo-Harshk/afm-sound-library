@@ -5,7 +5,7 @@ const SEARCH_QUERY = 'Applause';
 const externalSteps = [
   {
     title: 'Welcome to AFM Sound Catalog',
-    content: 'This is a sound taxonomy reference catalog. Let\'s explore by searching for a real sound — Applause.',
+    content: 'This is a sound taxonomy reference catalog. Let\'s explore by searching for a real sound. Try Applause!',
     placement: 'center',
   },
   {
@@ -24,7 +24,7 @@ const externalSteps = [
   {
     target: '[data-tour="table"]',
     title: 'Search Results',
-    content: 'The table filters instantly. Here\'s Applause — let\'s open it.',
+    content: 'The table filters instantly. There it is. Let\'s open it!',
     placement: 'top',
   },
 ];
@@ -33,7 +33,7 @@ const panelSteps = [
   {
     target: '[data-tour="detail-panel"]',
     title: 'Detail Panel',
-    content: 'Here\'s everything about the Applause sound — references, metadata, and taxonomy. Let\'s explore each section.',
+    content: 'Here\'s everything about the Applause sound: references, metadata, and taxonomy. Let\'s explore each section.',
     placement: 'left',
   },
   {
@@ -45,7 +45,7 @@ const panelSteps = [
   {
     target: '[data-tour="detail-references"]',
     title: 'References',
-    content: 'All linked references are grouped by type — YouTube, Audio, and Other. You can play, open, or delete them from here.',
+    content: 'All linked references are grouped by type: YouTube, Audio, and Other. You can play, open, or delete them from here.',
     placement: 'left',
   },
   {
@@ -57,7 +57,7 @@ const panelSteps = [
   {
     target: '[data-tour="detail-taxonomy"]',
     title: 'Taxonomy Path',
-    content: 'See exactly where this sound fits in the taxonomy — from section to subcategory to the specific label.',
+    content: 'See exactly where this sound fits in the taxonomy. From section to subcategory, down to the specific label.',
     placement: 'left',
   },
   {
@@ -70,7 +70,7 @@ const panelSteps = [
 
 const finishStep = {
   title: 'You\'re all set!',
-  content: 'You just explored the Applause sound. Try any sound yourself — search, browse, and discover!',
+  content: 'You just explored the Applause sound. Try any sound yourself. Search, browse, and discover!',
   placement: 'center',
 };
 
