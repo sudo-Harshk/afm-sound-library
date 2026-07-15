@@ -5,19 +5,19 @@ const SEARCH_QUERY = 'Applause';
 const externalSteps = [
   {
     title: 'Welcome to AFM Sound Catalog',
-    content: 'This is a sound taxonomy reference catalog. Let\'s explore by searching for a real sound. Try Applause!',
+    content: 'This is a sound taxonomy reference catalog. Let\'s explore by searching for a real sound. Applause!',
     placement: 'center',
   },
   {
     target: '[data-tour="sidebar"]',
     title: 'Category Sidebar',
-    content: 'Categories on the left let you browse by type. But let\'s try search instead.',
+    content: 'Browse categories on the left. Let\'s try search instead.',
     placement: 'right',
   },
   {
     target: '[data-tour="search"]',
     title: 'Search',
-    content: 'Let\'s search for Applause and see what comes up.',
+    content: 'Let\'s search for Applause.',
     placement: 'bottom',
     action: 'typeSearch',
   },
@@ -33,59 +33,65 @@ const panelSteps = [
   {
     target: '[data-tour="detail-panel"]',
     title: 'Detail Panel',
-    content: 'Here\'s everything about the Applause sound: references, metadata, and taxonomy. Let\'s explore each section.',
+    content: 'Here\'s everything about Applause: references, metadata, and taxonomy.',
     placement: 'left',
   },
   {
     target: '[data-tour="detail-media"]',
     title: 'Media Preview',
-    content: 'YouTube videos and audio references play right here. If a sound has a YouTube link, you can watch it inline.',
+    content: 'YouTube videos and audio play right here inline.',
     placement: 'left',
   },
   {
     target: '[data-tour="detail-references"]',
     title: 'References',
-    content: 'All linked references are grouped by type: YouTube, Audio, and Other. You can play, open, or delete them from here.',
+    content: 'References are grouped by type: YouTube, Audio, and Other.',
     placement: 'left',
   },
   {
     target: '[data-tour="detail-metadata"]',
     title: 'Metadata',
-    content: 'Each sound has a typical example, acoustic profile, and list of confusable labels to help distinguish it from similar sounds.',
+    content: 'Typical example, acoustic profile, and confusable labels to distinguish similar sounds.',
     placement: 'left',
   },
   {
     target: '[data-tour="detail-taxonomy"]',
     title: 'Taxonomy Path',
-    content: 'See exactly where this sound fits in the taxonomy. From section to subcategory, down to the specific label.',
+    content: 'See where this sound fits: section, subcategory, and label.',
     placement: 'left',
   },
   {
     target: '[data-tour="detail-addref"]',
     title: 'Add Reference',
-    content: 'Found a useful YouTube or Pixabay link? Add it here as a reference to help others discover this sound.',
+    content: 'Found a YouTube or Pixabay link? Add it here to help others.',
     placement: 'left',
   },
 ];
 
 const finishStep = {
   title: 'You\'re all set!',
-  content: 'You just explored the Applause sound. Try any sound yourself. Search, browse, and discover!',
+  content: 'You just explored Applause. Try any sound yourself!',
   placement: 'center',
 };
 
 const allSteps = [...externalSteps, ...panelSteps, finishStep];
 const PANEL_START = externalSteps.length;
 const PANEL_END = PANEL_START + panelSteps.length;
-const RESULTS_STEP = externalSteps.length - 1;
 const PANEL_ANIM_MS = 350;
 
 export default function HelpTour({ onClose, sounds, setSelectedSound, onQueryChange }) {
   const [step, setStep] = useState(0);
   const [spotlight, setSpotlight] = useState(null);
-  const [tooltipStyle, setTooltipStyle] = useState({});
+  const [tooltipStyle, setTooltipStyle] = useState({
+    position: 'fixed',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 360,
+  });
   const prevStepRef = useRef(0);
   const timersRef = useRef([]);
+  const typeTimerRef = useRef(null);
 
   const current = allSteps[step];
 
@@ -96,6 +102,7 @@ export default function HelpTour({ onClose, sounds, setSelectedSound, onQueryCha
   const cleanup = useCallback(() => {
     timersRef.current.forEach(clearTimeout);
     timersRef.current = [];
+    if (typeTimerRef.current) clearTimeout(typeTimerRef.current);
     setSelectedSound(null);
     onQueryChange('');
   }, [setSelectedSound, onQueryChange]);
@@ -123,9 +130,21 @@ export default function HelpTour({ onClose, sounds, setSelectedSound, onQueryCha
       const input = document.querySelector('[data-tour="search"] input');
       if (input) {
         input.focus();
-        onQueryChange(SEARCH_QUERY);
+        let i = 0;
+        const typeNext = () => {
+          if (i <= SEARCH_QUERY.length) {
+            const text = SEARCH_QUERY.slice(0, i);
+            requestAnimationFrame(() => onQueryChange(text));
+            i++;
+            typeTimerRef.current = setTimeout(typeNext, 120);
+          }
+        };
+        typeNext();
       }
     }
+    return () => {
+      if (typeTimerRef.current) clearTimeout(typeTimerRef.current);
+    };
   }, [current.action, onQueryChange]);
 
   useEffect(() => {
@@ -203,7 +222,8 @@ export default function HelpTour({ onClose, sounds, setSelectedSound, onQueryCha
     if (current.target) {
       const el = document.querySelector(current.target);
       if (el && isPanelStep) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        const goingBack = step < prevStepRef.current;
+        el.scrollIntoView({ behavior: 'smooth', block: goingBack ? 'nearest' : 'center' });
       }
     }
 
