@@ -223,16 +223,37 @@ export default function HelpTour({ onClose, sounds, setSelectedSound, onQueryCha
     timersRef.current.forEach(clearTimeout);
     timersRef.current = [];
 
+    let scrollContainer = null;
     if (current.target) {
-      const el = document.querySelector(current.target);
-      if (el && isPanelStep) {
-        const scrollContainer = el.closest('.overflow-y-auto');
-        if (scrollContainer) {
-          const elRect = el.getBoundingClientRect();
-          const containerRect = scrollContainer.getBoundingClientRect();
-          const offset = elRect.top - containerRect.top + scrollContainer.scrollTop;
-          const targetScroll = offset - scrollContainer.clientHeight / 2 + elRect.height / 2;
-          scrollContainer.scrollTo({ top: Math.max(0, targetScroll), behavior: 'smooth' });
+      if (enteringPanel) {
+        const deferredScroll = setTimeout(() => {
+          const el = document.querySelector(current.target);
+          if (el && isPanelStep) {
+            const sc = el.closest('.overflow-y-auto');
+            if (sc) {
+              const elRect = el.getBoundingClientRect();
+              const containerRect = sc.getBoundingClientRect();
+              const offset = elRect.top - containerRect.top + sc.scrollTop;
+              const targetScroll = offset - sc.clientHeight / 2 + elRect.height / 2;
+              sc.scrollTo({ top: Math.max(0, targetScroll), behavior: 'smooth' });
+            }
+          }
+        }, PANEL_ANIM_MS);
+        timersRef.current.push(deferredScroll);
+      } else {
+        const el = document.querySelector(current.target);
+        if (el && isPanelStep) {
+          scrollContainer = el.closest('.overflow-y-auto');
+          if (scrollContainer) {
+            const elRect = el.getBoundingClientRect();
+            const containerRect = scrollContainer.getBoundingClientRect();
+            const offset = elRect.top - containerRect.top + scrollContainer.scrollTop;
+            const targetScroll = offset - scrollContainer.clientHeight / 2 + elRect.height / 2;
+            scrollContainer.scrollTo({ top: Math.max(0, targetScroll), behavior: 'smooth' });
+            // scrollTo(behavior: 'smooth') duration varies with distance, so the fixed
+            // timers below can fire before it settles; track position live while it moves.
+            scrollContainer.addEventListener('scroll', updateSpotlight);
+          }
         }
       }
     }
@@ -243,14 +264,15 @@ export default function HelpTour({ onClose, sounds, setSelectedSound, onQueryCha
       setTimeout(updateSpotlight, delay + 350),
       setTimeout(updateSpotlight, delay + 600),
     ];
-    timersRef.current = timers;
+    timersRef.current.push(...timers);
 
     window.addEventListener('resize', updateSpotlight);
     return () => {
-      timers.forEach(clearTimeout);
+      timersRef.current.forEach(clearTimeout);
       window.removeEventListener('resize', updateSpotlight);
+      if (scrollContainer) scrollContainer.removeEventListener('scroll', updateSpotlight);
     };
-  }, [updateSpotlight, isPanelStep, current.target]);
+  }, [updateSpotlight, isPanelStep, current.target, enteringPanel]);
 
   useEffect(() => {
     const handler = (e) => {
