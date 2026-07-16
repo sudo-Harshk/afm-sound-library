@@ -229,13 +229,14 @@ export default function HelpTour({ onClose, sounds, setSelectedSound, onQueryCha
         const deferredScroll = setTimeout(() => {
           const el = document.querySelector(current.target);
           if (el && isPanelStep) {
-            const sc = el.closest('.overflow-y-auto');
-            if (sc) {
+            scrollContainer = el.closest('.overflow-y-auto');
+            if (scrollContainer) {
               const elRect = el.getBoundingClientRect();
-              const containerRect = sc.getBoundingClientRect();
-              const offset = elRect.top - containerRect.top + sc.scrollTop;
-              const targetScroll = offset - sc.clientHeight / 2 + elRect.height / 2;
-              sc.scrollTo({ top: Math.max(0, targetScroll), behavior: 'smooth' });
+              const containerRect = scrollContainer.getBoundingClientRect();
+              const offset = elRect.top - containerRect.top + scrollContainer.scrollTop;
+              const targetScroll = offset - scrollContainer.clientHeight / 2 + elRect.height / 2;
+              scrollContainer.scrollTo({ top: Math.max(0, targetScroll), behavior: 'smooth' });
+              scrollContainer.addEventListener('scroll', updateSpotlight);
             }
           }
         }, PANEL_ANIM_MS);
