@@ -60,9 +60,11 @@ export default function TopBar({ query, onQueryChange, onHelpClick }) {
           <button
             onClick={() => setMenuOpen((o) => !o)}
             title="Reference documents"
-            className="w-9 h-9 rounded-full border border-line flex items-center justify-center text-ink-faint hover:text-accent hover:border-accent/50 transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-line text-[13px] text-ink-faint hover:text-accent hover:border-accent/50 transition-colors"
           >
-            <span className="material-symbols-outlined text-[18px]">description</span>
+            <span className="material-symbols-outlined text-[16px]">description</span>
+            Docs
+            <span className="material-symbols-outlined text-[14px]">expand_more</span>
           </button>
           {menuOpen && (
             <div className="absolute right-0 top-full mt-2 w-48 bg-paper-raised rounded-xl shadow-2xl border border-line py-1.5 z-50">
@@ -88,17 +90,19 @@ export default function TopBar({ query, onQueryChange, onHelpClick }) {
           target="_blank"
           rel="noopener noreferrer"
           title="Annotation Tracker"
-          className="w-9 h-9 rounded-full border border-line flex items-center justify-center text-ink-faint hover:text-accent hover:border-accent/50 transition-colors"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-line text-[13px] text-ink-faint hover:text-accent hover:border-accent/50 transition-colors"
         >
-          <span className="material-symbols-outlined text-[18px]">open_in_new</span>
+          <span className="material-symbols-outlined text-[16px]">open_in_new</span>
+          Tracker
         </a>
 
         <button
           onClick={onHelpClick}
           title="How to use"
-          className="w-9 h-9 rounded-full border border-line flex items-center justify-center text-ink-faint hover:text-accent hover:border-accent/50 transition-colors"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-line text-[13px] text-ink-faint hover:text-accent hover:border-accent/50 transition-colors"
         >
-          <span className="material-symbols-outlined text-[18px]">help_outline</span>
+          <span className="material-symbols-outlined text-[16px]">help_outline</span>
+          Help
         </button>
       </div>
     </header>
