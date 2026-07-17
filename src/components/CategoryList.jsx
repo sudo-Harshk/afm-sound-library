@@ -1,4 +1,5 @@
 import { getCategoryIcon } from '../lib/icons';
+import { toTitleCase } from '../lib/format';
 
 export default function CategoryList({ categories, onSelect }) {
   if (categories.length === 0) return null;
@@ -16,7 +17,7 @@ export default function CategoryList({ categories, onSelect }) {
             <div className="shrink-0 w-9 h-9 rounded-lg bg-accent-soft flex items-center justify-center">
               <span className="material-symbols-outlined text-accent text-[18px]">{icon}</span>
             </div>
-            <span className="flex-1 min-w-0 text-[14px] font-medium text-ink leading-snug">{name}</span>
+            <span className="flex-1 min-w-0 text-[14px] font-medium text-ink leading-snug">{toTitleCase(name)}</span>
             <span className="shrink-0 text-xs font-medium text-ink-faint tabular-nums bg-paper px-2 py-0.5 rounded-full">{count}</span>
           </button>
         );

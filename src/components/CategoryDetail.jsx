@@ -2,6 +2,7 @@ import { useRef, useState, useEffect } from 'react';
 import { ArrowLeft, ChevronLeft, ChevronRight, Shuffle, RotateCcw } from 'lucide-react';
 import CardStack from './ui/card-stack';
 import SoundCardFace from './SoundCardFace';
+import { toTitleCase } from '../lib/format';
 
 export default function CategoryDetail({ category, sounds, onBack, onAddReference, onDeleteReference }) {
   const stackRef = useRef(null);
@@ -28,7 +29,7 @@ export default function CategoryDetail({ category, sounds, onBack, onAddReferenc
     <div>
       <BackButton onBack={onBack} />
       <div className="flex items-center justify-between mb-5 sm:mb-6">
-        <h2 className="text-lg sm:text-xl font-semibold text-ink truncate pr-3">{category}</h2>
+        <h2 className="text-lg sm:text-xl font-semibold text-ink truncate pr-3">{toTitleCase(category)}</h2>
         <span className="shrink-0 text-xs font-medium text-ink-faint tabular-nums bg-paper-raised border border-line px-2.5 py-1 rounded-full">
           {index + 1} / {total}
         </span>

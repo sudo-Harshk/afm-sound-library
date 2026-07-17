@@ -60,6 +60,7 @@ export default function TopBar({ query, onQueryChange, onHelpClick }) {
           <button
             onClick={() => setMenuOpen((o) => !o)}
             title="Reference documents"
+            data-tour="docs"
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-line text-[13px] text-ink-faint hover:text-accent hover:border-accent/50 transition-colors"
           >
             <span className="material-symbols-outlined text-[16px]">description</span>
@@ -90,6 +91,7 @@ export default function TopBar({ query, onQueryChange, onHelpClick }) {
           target="_blank"
           rel="noopener noreferrer"
           title="Annotation Tracker"
+          data-tour="tracker"
           className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-line text-[13px] text-ink-faint hover:text-accent hover:border-accent/50 transition-colors"
         >
           <span className="material-symbols-outlined text-[16px]">open_in_new</span>

@@ -14,6 +14,7 @@ const HelpTour = lazy(() => import('./components/HelpTour'));
 import { searchSounds, removeReferenceByUrl, hasReferenceUrl } from './lib/refs';
 import { useTheme } from './lib/useTheme';
 import { useSidebarWidth } from './lib/useSidebarWidth';
+import { toTitleCase } from './lib/format';
 
 const SECTION_ORDER = [
   'Human vocal and speech sounds',
@@ -214,7 +215,7 @@ export default function App() {
             <Breadcrumb
               items={[
                 { label: 'All Categories', onClick: () => handleSelectCategory(null) },
-                ...(activeCategory ? [{ label: activeCategory }] : []),
+                ...(activeCategory ? [{ label: toTitleCase(activeCategory) }] : []),
                 ...(isSearching ? [{ label: `Search: ${query}` }] : []),
               ]}
             />
@@ -224,7 +225,7 @@ export default function App() {
                   {isSearching
                     ? <>Search: &lsquo;{query}&rsquo;</>
                     : activeCategory
-                      ? activeCategory
+                      ? toTitleCase(activeCategory)
                       : 'Sound Catalog'}
                 </h2>
                 <p className="text-[14px] text-ink-soft mt-1">

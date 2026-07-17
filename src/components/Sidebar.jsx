@@ -1,4 +1,5 @@
 import { getCategoryIcon } from '../lib/icons';
+import { toTitleCase } from '../lib/format';
 
 export default function Sidebar({
   categories,
@@ -59,7 +60,7 @@ export default function Sidebar({
               }`}
             >
               <span className="material-symbols-outlined text-[18px] shrink-0">{icon}</span>
-              <span className="flex-1 min-w-0 text-left">{name}</span>
+              <span className="flex-1 min-w-0 text-left">{toTitleCase(name)}</span>
               <span className="text-[11px] text-ink-faint tabular-nums shrink-0">{count}</span>
             </button>
           );

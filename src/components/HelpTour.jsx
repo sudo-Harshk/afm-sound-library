@@ -15,6 +15,18 @@ const externalSteps = [
     placement: 'right',
   },
   {
+    target: '[data-tour="docs"]',
+    title: 'Reference Documents',
+    content: 'The complete sound taxonomy and Q&A reference are here.',
+    placement: 'bottom',
+  },
+  {
+    target: '[data-tour="tracker"]',
+    title: 'Annotation Tracker',
+    content: 'Track your annotation progress here.',
+    placement: 'bottom',
+  },
+  {
     target: '[data-tour="search"]',
     title: 'Search',
     content: 'Let\'s search for Applause.',

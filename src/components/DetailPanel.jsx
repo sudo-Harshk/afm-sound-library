@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { getYouTubeId, getDomainName, isValidUrl, isAllowedDomain, groupReferences, hasReferenceUrl } from '../lib/refs';
 import { getCategoryIcon } from '../lib/icons';
+import { toTitleCase } from '../lib/format';
 
 export default function DetailPanel({ sound, onClose, onAddReference, onDeleteReference }) {
   const [adding, setAdding] = useState(false);
@@ -95,7 +96,7 @@ export default function DetailPanel({ sound, onClose, onAddReference, onDeleteRe
             <div>
               <h2 className="text-[20px] font-semibold text-ink mb-2">{sound.canonicalLabel}</h2>
               <span className="inline-flex items-center px-2 py-1 bg-accent-soft/40 text-accent border border-accent-soft rounded text-[11px] font-medium">
-                {sound.section}
+                {toTitleCase(sound.section)}
               </span>
             </div>
 
@@ -206,7 +207,7 @@ export default function DetailPanel({ sound, onClose, onAddReference, onDeleteRe
               <div className="space-y-2 ml-1">
                 <div className="flex items-center gap-3">
                   <div className="w-1.5 h-1.5 rounded-full bg-ink-faint" />
-                  <span className="text-[13px] text-ink">{sound.section}</span>
+                  <span className="text-[13px] text-ink">{toTitleCase(sound.section)}</span>
                 </div>
                 {sound.subcategory && (
                   <div className="flex items-center gap-3 ml-4 border-l-2 border-line pl-4">
