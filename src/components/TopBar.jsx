@@ -83,6 +83,16 @@ export default function TopBar({ query, onQueryChange, onHelpClick }) {
           )}
         </div>
 
+        <a
+          href="https://ai-products.meeamitech.com/annotation_tracker2/"
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Annotation Tracker"
+          className="w-9 h-9 rounded-full border border-line flex items-center justify-center text-ink-faint hover:text-accent hover:border-accent/50 transition-colors"
+        >
+          <span className="material-symbols-outlined text-[18px]">open_in_new</span>
+        </a>
+
         <button
           onClick={onHelpClick}
           title="How to use"
