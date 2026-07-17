@@ -1,7 +1,14 @@
-import { useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
+
+const RESOURCES = [
+  { label: 'Sound Taxonomy', href: '/docs/Complete_Sound_Event_Taxonomy_v2_Revised.pdf' },
+  { label: 'Q&A Reference', href: '/docs/Consolidated_QA_from_Team_Discussion.pdf' },
+];
 
 export default function TopBar({ query, onQueryChange, onHelpClick }) {
   const inputRef = useRef(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef(null);
 
   useEffect(() => {
     const handler = (e) => {
@@ -13,6 +20,15 @@ export default function TopBar({ query, onQueryChange, onHelpClick }) {
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
   }, []);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    const handler = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) setMenuOpen(false);
+    };
+    window.addEventListener('mousedown', handler);
+    return () => window.removeEventListener('mousedown', handler);
+  }, [menuOpen]);
 
   return (
     <header className="hidden lg:flex items-center h-16 px-6 sticky top-0 z-40 bg-paper/80 backdrop-blur-md border-b border-line">
@@ -39,13 +55,42 @@ export default function TopBar({ query, onQueryChange, onHelpClick }) {
         )}
       </div>
 
-      <button
-        onClick={onHelpClick}
-        title="How to use"
-        className="ml-3 shrink-0 w-9 h-9 rounded-full border border-line flex items-center justify-center text-ink-faint hover:text-accent hover:border-accent/50 transition-colors"
-      >
-        <span className="material-symbols-outlined text-[18px]">help_outline</span>
-      </button>
+      <div className="ml-3 flex items-center gap-2 shrink-0" ref={menuRef}>
+        <div className="relative">
+          <button
+            onClick={() => setMenuOpen((o) => !o)}
+            title="Reference documents"
+            className="w-9 h-9 rounded-full border border-line flex items-center justify-center text-ink-faint hover:text-accent hover:border-accent/50 transition-colors"
+          >
+            <span className="material-symbols-outlined text-[18px]">description</span>
+          </button>
+          {menuOpen && (
+            <div className="absolute right-0 top-full mt-2 w-48 bg-paper-raised rounded-xl shadow-2xl border border-line py-1.5 z-50">
+              {RESOURCES.map((r) => (
+                <a
+                  key={r.href}
+                  href={r.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2.5 px-4 py-2 text-[13px] text-ink-soft hover:text-accent hover:bg-surface-container transition-colors"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  <span className="material-symbols-outlined text-[16px]">open_in_new</span>
+                  {r.label}
+                </a>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <button
+          onClick={onHelpClick}
+          title="How to use"
+          className="w-9 h-9 rounded-full border border-line flex items-center justify-center text-ink-faint hover:text-accent hover:border-accent/50 transition-colors"
+        >
+          <span className="material-symbols-outlined text-[18px]">help_outline</span>
+        </button>
+      </div>
     </header>
   );
 }
