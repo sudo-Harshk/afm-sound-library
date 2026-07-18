@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
+import { features } from '../lib/config';
 
 const RESOURCES = [
   { label: 'Sound Taxonomy', href: '/docs/Complete_Sound_Event_Taxonomy_v2_Revised.pdf' },
   { label: 'Q&A Reference', href: '/docs/Consolidated_QA_from_Team_Discussion.pdf' },
 ];
 
-export default function TopBar({ query, onQueryChange, onHelpClick }) {
+export default function TopBar({ query, onQueryChange, onHelpClick, user, admin, onLogin, onLogout, showAdmin }) {
   const inputRef = useRef(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
@@ -56,47 +57,51 @@ export default function TopBar({ query, onQueryChange, onHelpClick }) {
       </div>
 
       <div className="ml-3 flex items-center gap-2 shrink-0" ref={menuRef}>
-        <div className="relative">
-          <button
-            onClick={() => setMenuOpen((o) => !o)}
-            title="Reference documents"
-            data-tour="docs"
+        {features.showDocs && (
+          <div className="relative">
+            <button
+              onClick={() => setMenuOpen((o) => !o)}
+              title="Reference documents"
+              data-tour="docs"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-line text-[13px] text-ink-faint hover:text-accent hover:border-accent/50 transition-colors"
+            >
+              <span className="material-symbols-outlined text-[16px]">description</span>
+              Docs
+              <span className="material-symbols-outlined text-[14px]">expand_more</span>
+            </button>
+            {menuOpen && (
+              <div className="absolute right-0 top-full mt-2 w-48 bg-paper-raised rounded-xl shadow-2xl border border-line py-1.5 z-50">
+                {RESOURCES.map((r) => (
+                  <a
+                    key={r.href}
+                    href={r.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2.5 px-4 py-2 text-[13px] text-ink-soft hover:text-accent hover:bg-surface-container transition-colors"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    <span className="material-symbols-outlined text-[16px]">open_in_new</span>
+                    {r.label}
+                  </a>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {features.showTracker && (
+          <a
+            href="https://ai-products.meeamitech.com/annotation_tracker2/"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Annotation Tracker"
+            data-tour="tracker"
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-line text-[13px] text-ink-faint hover:text-accent hover:border-accent/50 transition-colors"
           >
-            <span className="material-symbols-outlined text-[16px]">description</span>
-            Docs
-            <span className="material-symbols-outlined text-[14px]">expand_more</span>
-          </button>
-          {menuOpen && (
-            <div className="absolute right-0 top-full mt-2 w-48 bg-paper-raised rounded-xl shadow-2xl border border-line py-1.5 z-50">
-              {RESOURCES.map((r) => (
-                <a
-                  key={r.href}
-                  href={r.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2.5 px-4 py-2 text-[13px] text-ink-soft hover:text-accent hover:bg-surface-container transition-colors"
-                  onClick={() => setMenuOpen(false)}
-                >
-                  <span className="material-symbols-outlined text-[16px]">open_in_new</span>
-                  {r.label}
-                </a>
-              ))}
-            </div>
-          )}
-        </div>
-
-        <a
-          href="https://ai-products.meeamitech.com/annotation_tracker2/"
-          target="_blank"
-          rel="noopener noreferrer"
-          title="Annotation Tracker"
-          data-tour="tracker"
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-line text-[13px] text-ink-faint hover:text-accent hover:border-accent/50 transition-colors"
-        >
-          <span className="material-symbols-outlined text-[16px]">open_in_new</span>
-          Tracker
-        </a>
+            <span className="material-symbols-outlined text-[16px]">open_in_new</span>
+            Tracker
+          </a>
+        )}
 
         <button
           onClick={onHelpClick}
@@ -106,6 +111,26 @@ export default function TopBar({ query, onQueryChange, onHelpClick }) {
           <span className="material-symbols-outlined text-[16px]">help_outline</span>
           Help
         </button>
+
+        {showAdmin && (
+          user ? (
+            <button
+              onClick={onLogout}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-[13px] transition-colors ${admin ? 'bg-accent-soft border-accent text-accent' : 'border-line text-ink-faint hover:text-accent hover:border-accent/50'}`}
+            >
+              <span className="material-symbols-outlined text-[16px]">logout</span>
+              {admin ? 'Admin ✓' : 'Admin'}
+            </button>
+          ) : (
+            <button
+              onClick={onLogin}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-line text-[13px] text-ink-faint hover:text-accent hover:border-accent/50 transition-colors"
+            >
+              <span className="material-symbols-outlined text-[16px]">login</span>
+              Admin
+            </button>
+          )
+        )}
       </div>
     </header>
   );

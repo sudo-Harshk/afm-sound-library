@@ -4,7 +4,7 @@ import CardStack from './ui/card-stack';
 import SoundCardFace from './SoundCardFace';
 import { toTitleCase } from '../lib/format';
 
-export default function CategoryDetail({ category, sounds, onBack, onAddReference, onDeleteReference }) {
+export default function CategoryDetail({ category, sounds, onBack, onAddReference, onDeleteReference, canDelete }) {
   const stackRef = useRef(null);
   const [index, setIndex] = useState(0);
 
@@ -42,7 +42,7 @@ export default function CategoryDetail({ category, sounds, onBack, onAddReferenc
           aspectRatio="4 / 5"
           onFrontChange={(_, idx) => setIndex(idx)}
           renderItem={(sound, isFront, setDragLocked) => (
-            <SoundCardFace sound={sound} isFront={isFront} onAddReference={onAddReference} onDeleteReference={onDeleteReference} onLockDrag={setDragLocked} />
+            <SoundCardFace sound={sound} isFront={isFront} onAddReference={onAddReference} onDeleteReference={onDeleteReference} onLockDrag={setDragLocked} canDelete={canDelete} />
           )}
         />
 

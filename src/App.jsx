@@ -16,6 +16,9 @@ import { useTheme } from './lib/useTheme';
 import { useSidebarWidth } from './lib/useSidebarWidth';
 import { toTitleCase, normalize } from './lib/format';
 import { getLabelOrder } from './lib/labelOrder';
+import { features } from './lib/config';
+import { useAuth } from './lib/auth';
+import LoginDialog from './components/LoginDialog';
 
 const SECTION_ORDER = [
   'Human vocal and speech sounds',
@@ -52,6 +55,10 @@ export default function App() {
   const [activeCategory, setActiveCategory] = useState(null);
   const [selectedSound, setSelectedSound] = useState(null);
   const [showTour, setShowTour] = useState(false);
+  const [showLogin, setShowLogin] = useState(false);
+  const { user, admin, signOut } = useAuth();
+  const canDelete = admin;
+  const showAdminLogin = new URLSearchParams(window.location.search).get('admin') === 'true' || !!user;
 
   const handleSelectCategory = useCallback((cat) => {
     setActiveCategory(cat);
@@ -196,15 +203,36 @@ export default function App() {
               >
                 <span className="material-symbols-outlined text-[16px]">help_outline</span>
               </button>
-              <a
-                href="https://ai-products.meeamitech.com/annotation_tracker2/"
-                target="_blank"
-                rel="noopener noreferrer"
-                title="Annotation Tracker"
-                className="shrink-0 w-9 h-9 rounded-full border border-line bg-paper flex items-center justify-center text-ink-faint hover:text-accent hover:border-accent/50 transition-colors duration-150"
-              >
-                <span className="material-symbols-outlined text-[16px]">open_in_new</span>
-              </a>
+              {features.showTracker && (
+                <a
+                  href="https://ai-products.meeamitech.com/annotation_tracker2/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title="Annotation Tracker"
+                  className="shrink-0 w-9 h-9 rounded-full border border-line bg-paper flex items-center justify-center text-ink-faint hover:text-accent hover:border-accent/50 transition-colors duration-150"
+                >
+                  <span className="material-symbols-outlined text-[16px]">open_in_new</span>
+                </a>
+              )}
+              {showAdminLogin && (
+                user ? (
+                  <button
+                    onClick={signOut}
+                    title={admin ? 'Admin ✓ — click to sign out' : 'Sign out'}
+                    className={`shrink-0 w-9 h-9 rounded-full border flex items-center justify-center transition-colors duration-150 ${admin ? 'bg-accent-soft border-accent text-accent' : 'border-line bg-paper text-ink-faint hover:text-accent hover:border-accent/50'}`}
+                  >
+                    <span className="material-symbols-outlined text-[16px]">logout</span>
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => setShowLogin(true)}
+                    title="Admin login"
+                    className="shrink-0 w-9 h-9 rounded-full border border-line bg-paper flex items-center justify-center text-ink-faint hover:text-accent hover:border-accent/50 transition-colors duration-150"
+                  >
+                    <span className="material-symbols-outlined text-[16px]">login</span>
+                  </button>
+                )
+              )}
               <button
                 onClick={toggleTheme}
                 title={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
@@ -222,7 +250,7 @@ export default function App() {
         <main className="max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-14">
           <SearchBar query={query} onQueryChange={setQuery} />
           <div className="mt-6 sm:mt-8">
-            {renderContent(isSearching, searchResults, activeCategory, categorySounds, categories, handleSelectCategory, handleAddReference, handleDeleteReference)}
+            {renderContent(isSearching, searchResults, activeCategory, categorySounds, categories, handleSelectCategory, handleAddReference, handleDeleteReference, canDelete)}
           </div>
         </main>
       </div>
@@ -232,7 +260,7 @@ export default function App() {
         className={`hidden lg:flex lg:flex-col lg:min-h-screen ${isSidebarDragging ? '' : 'transition-[margin-left] duration-100'}`}
         style={{ marginLeft: sidebarWidth }}
       >
-        <TopBar query={query} onQueryChange={setQuery} onHelpClick={() => setShowTour(true)} />
+        <TopBar query={query} onQueryChange={setQuery} onHelpClick={() => setShowTour(true)} user={user} admin={admin} onLogin={() => setShowLogin(true)} onLogout={signOut} showAdmin={showAdminLogin} />
         <main className="flex-1 overflow-y-auto p-6">
             <Breadcrumb
               items={[
@@ -275,6 +303,7 @@ export default function App() {
           onClose={() => setSelectedSound(null)}
           onAddReference={handleAddReference}
           onDeleteReference={handleDeleteReference}
+          canDelete={canDelete}
         />
       )}
 
@@ -284,13 +313,18 @@ export default function App() {
           <HelpTour onClose={() => setShowTour(false)} sounds={sounds} setSelectedSound={setSelectedSound} onQueryChange={setQuery} />
         </Suspense>
       )}
+
+      {/* Login dialog */}
+      {showLogin && (
+        <LoginDialog onClose={() => setShowLogin(false)} />
+      )}
     </div>
   );
 }
 
-function renderContent(isSearching, searchResults, activeCategory, categorySounds, categories, handleSelectCategory, handleAddReference, handleDeleteReference) {
+function renderContent(isSearching, searchResults, activeCategory, categorySounds, categories, handleSelectCategory, handleAddReference, handleDeleteReference, canDelete) {
   if (isSearching) {
-    return <LabelList sounds={searchResults} onAddReference={handleAddReference} onDeleteReference={handleDeleteReference} />;
+    return <LabelList sounds={searchResults} onAddReference={handleAddReference} onDeleteReference={handleDeleteReference} canDelete={canDelete} />;
   }
   if (activeCategory) {
     return (
@@ -301,6 +335,7 @@ function renderContent(isSearching, searchResults, activeCategory, categorySound
           onBack={() => handleSelectCategory(null)}
           onAddReference={handleAddReference}
           onDeleteReference={handleDeleteReference}
+          canDelete={canDelete}
         />
       </Suspense>
     );

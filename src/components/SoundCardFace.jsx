@@ -5,7 +5,7 @@ import { getCategoryIcon } from '../lib/icons';
 
 const VISIBLE_CHIPS = 3;
 
-export default function SoundCardFace({ sound, isFront, onAddReference, onDeleteReference, onLockDrag }) {
+export default function SoundCardFace({ sound, isFront, onAddReference, onDeleteReference, onLockDrag, canDelete }) {
   const [playingUrl, setPlayingUrl] = useState(null);
   const [detailOpen, setDetailOpen] = useState(false);
   const [adding, setAdding] = useState(false);
@@ -183,14 +183,16 @@ export default function SoundCardFace({ sound, isFront, onAddReference, onDelete
                         >
                           <div className="flex items-center justify-between gap-2 mb-1">
                             <p className="text-[10px] text-ink-faint truncate min-w-0">{ref.url}</p>
-                            <button
-                              onPointerDownCapture={stop}
-                              onClick={(e) => { e.stopPropagation(); handleDelete(ref); }}
-                              className="shrink-0 p-0.5 rounded hover:bg-red-500/10 text-ink-faint hover:text-red-500 transition-colors"
-                              title="Delete reference"
-                            >
-                              <X className="w-3 h-3" />
-                            </button>
+                            {canDelete && (
+                              <button
+                                onPointerDownCapture={stop}
+                                onClick={(e) => { e.stopPropagation(); handleDelete(ref); }}
+                                className="shrink-0 p-0.5 rounded hover:bg-red-500/10 text-ink-faint hover:text-red-500 transition-colors"
+                                title="Delete reference"
+                              >
+                                <X className="w-3 h-3" />
+                              </button>
+                            )}
                           </div>
                           <audio controls preload="none" className="w-full h-7">
                             <source src={ref.url} />
@@ -219,14 +221,16 @@ export default function SoundCardFace({ sound, isFront, onAddReference, onDelete
                               </span>
                               {getDomainName(ref.url)}
                             </button>
-                            <button
-                              onPointerDownCapture={stop}
-                              onClick={(e) => { e.stopPropagation(); handleDelete(ref); }}
-                              className="shrink-0 p-1 rounded hover:bg-red-500/10 text-ink-faint hover:text-red-500 transition-colors"
-                              title="Delete reference"
-                            >
-                              <X className="w-3 h-3" />
-                            </button>
+                            {canDelete && (
+                              <button
+                                onPointerDownCapture={stop}
+                                onClick={(e) => { e.stopPropagation(); handleDelete(ref); }}
+                                className="shrink-0 p-1 rounded hover:bg-red-500/10 text-ink-faint hover:text-red-500 transition-colors"
+                                title="Delete reference"
+                              >
+                                <X className="w-3 h-3" />
+                              </button>
+                            )}
                           </div>
                         );
                       })

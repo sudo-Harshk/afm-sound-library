@@ -1,3 +1,4 @@
+require('dotenv').config({ path: require('path').join(__dirname, '..', '.env') });
 const { initializeApp } = require("firebase/app");
 const {
   getFirestore,
@@ -10,12 +11,12 @@ const {
 const { SECTIONS } = require("./master-taxonomy.cjs");
 
 const firebaseConfig = {
-  apiKey: "AIzaSyC9NN6pPcRSrW7tRioJg8phwXXdF44ojtY",
-  authDomain: "afm-sound-library.firebaseapp.com",
-  projectId: "afm-sound-library",
-  storageBucket: "afm-sound-library.firebasestorage.app",
-  messagingSenderId: "914724396864",
-  appId: "1:914724396864:web:eb5f04fa30aa99453ce4a5",
+  apiKey: process.env.VITE_FIREBASE_API_KEY,
+  authDomain: process.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.VITE_FIREBASE_APP_ID,
 };
 
 const app = initializeApp(firebaseConfig);

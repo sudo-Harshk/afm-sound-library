@@ -1,6 +1,6 @@
 import LabelRow from './LabelRow';
 
-export default function LabelList({ sounds, groupBySubcategory = false, onAddReference, onDeleteReference }) {
+export default function LabelList({ sounds, groupBySubcategory = false, onAddReference, onDeleteReference, canDelete }) {
   if (sounds.length === 0) {
     return <p className="py-8 text-sm text-ink-faint">No sounds found.</p>;
   }
@@ -9,7 +9,7 @@ export default function LabelList({ sounds, groupBySubcategory = false, onAddRef
     return (
       <div className="rounded-xl border border-line bg-paper-raised shadow-[var(--shadow-card)] p-2 divide-y divide-line">
         {sounds.map((sound) => (
-          <LabelRow key={sound.id} sound={sound} onAddReference={onAddReference} onDeleteReference={onDeleteReference} />
+          <LabelRow key={sound.id} sound={sound} onAddReference={onAddReference} onDeleteReference={onDeleteReference} canDelete={canDelete} />
         ))}
       </div>
     );
@@ -31,7 +31,7 @@ export default function LabelList({ sounds, groupBySubcategory = false, onAddRef
           )}
           <div className="divide-y divide-line">
             {items.map((sound) => (
-              <LabelRow key={sound.id} sound={sound} showBreadcrumb={false} onAddReference={onAddReference} onDeleteReference={onDeleteReference} />
+              <LabelRow key={sound.id} sound={sound} showBreadcrumb={false} onAddReference={onAddReference} onDeleteReference={onDeleteReference} canDelete={canDelete} />
             ))}
           </div>
         </div>

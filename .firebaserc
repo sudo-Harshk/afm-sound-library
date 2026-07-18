@@ -1,5 +1,6 @@
 {
   "projects": {
-    "default": "afm-sound-library"
+    "default": "afm-sound-library",
+    "dev": "afm-sound-library-dev"
   }
 }

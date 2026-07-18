@@ -3,7 +3,7 @@ import { getYouTubeId, getDomainName, isValidUrl, isAllowedDomain, groupReferenc
 import { getCategoryIcon } from '../lib/icons';
 import { toTitleCase } from '../lib/format';
 
-export default function DetailPanel({ sound, onClose, onAddReference, onDeleteReference }) {
+export default function DetailPanel({ sound, onClose, onAddReference, onDeleteReference, canDelete }) {
   const [adding, setAdding] = useState(false);
   const [url, setUrl] = useState('');
   const [error, setError] = useState('');
@@ -129,13 +129,15 @@ export default function DetailPanel({ sound, onClose, onAddReference, onDeleteRe
                               >
                                 <div className="flex items-center justify-between gap-2 mb-1.5">
                                   <p className="text-[11px] text-ink-faint truncate min-w-0">{ref.url}</p>
-                                  <button
-                                    onClick={() => handleDelete(ref)}
-                                    className="shrink-0 p-1 rounded hover:bg-red-500/10 text-ink-faint hover:text-red-500 transition-colors"
-                                    title="Delete reference"
-                                  >
-                                    <span className="material-symbols-outlined text-[14px]">close</span>
-                                  </button>
+                                  {canDelete && (
+                                    <button
+                                      onClick={() => handleDelete(ref)}
+                                      className="shrink-0 p-1 rounded hover:bg-red-500/10 text-ink-faint hover:text-red-500 transition-colors"
+                                      title="Delete reference"
+                                    >
+                                      <span className="material-symbols-outlined text-[14px]">close</span>
+                                    </button>
+                                  )}
                                 </div>
                                 <audio controls preload="none" className="w-full h-8">
                                   <source src={ref.url} />
@@ -163,13 +165,15 @@ export default function DetailPanel({ sound, onClose, onAddReference, onDeleteRe
                                     </span>
                                     {getDomainName(ref.url)}
                                   </button>
-                                  <button
-                                    onClick={() => handleDelete(ref)}
-                                    className="shrink-0 p-1.5 rounded hover:bg-red-500/10 text-ink-faint hover:text-red-500 transition-colors"
-                                    title="Delete reference"
-                                  >
-                                    <span className="material-symbols-outlined text-[16px]">close</span>
-                                  </button>
+                                  {canDelete && (
+                                    <button
+                                      onClick={() => handleDelete(ref)}
+                                      className="shrink-0 p-1.5 rounded hover:bg-red-500/10 text-ink-faint hover:text-red-500 transition-colors"
+                                      title="Delete reference"
+                                    >
+                                      <span className="material-symbols-outlined text-[16px]">close</span>
+                                    </button>
+                                  )}
                                 </div>
                               );
                             })

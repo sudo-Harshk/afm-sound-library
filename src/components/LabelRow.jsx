@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { ChevronDown, Plus, ExternalLink, Play, X } from 'lucide-react';
 import { getYouTubeId, getDomainName, isValidUrl, isAllowedDomain, groupReferences, hasReferenceUrl } from '../lib/refs';
 
-export default function LabelRow({ sound, showBreadcrumb = true, onAddReference, onDeleteReference }) {
+export default function LabelRow({ sound, showBreadcrumb = true, onAddReference, onDeleteReference, canDelete }) {
   const [open, setOpen] = useState(false);
   const [playingUrl, setPlayingUrl] = useState(null);
   const [adding, setAdding] = useState(false);
@@ -85,16 +85,18 @@ export default function LabelRow({ sound, showBreadcrumb = true, onAddReference,
                         key={i}
                         className="w-full px-3 py-2 rounded-lg border border-line bg-paper-raised"
                       >
-                        <div className="flex items-center justify-between gap-2 mb-1">
-                          <p className="text-[10px] text-ink-faint truncate min-w-0">{ref.url}</p>
-                          <button
-                            onClick={() => handleDelete(ref)}
-                            className="shrink-0 p-0.5 rounded hover:bg-red-500/10 text-ink-faint hover:text-red-500 transition-colors"
-                            title="Delete reference"
-                          >
-                            <X className="w-3 h-3" />
-                          </button>
-                        </div>
+                          <div className="flex items-center justify-between gap-2 mb-1">
+                            <p className="text-[10px] text-ink-faint truncate min-w-0">{ref.url}</p>
+                            {canDelete && (
+                              <button
+                                onClick={() => handleDelete(ref)}
+                                className="shrink-0 p-0.5 rounded hover:bg-red-500/10 text-ink-faint hover:text-red-500 transition-colors"
+                                title="Delete reference"
+                              >
+                                <X className="w-3 h-3" />
+                              </button>
+                            )}
+                          </div>
                         <audio controls preload="none" className="w-full h-7">
                           <source src={ref.url} />
                         </audio>
@@ -116,13 +118,15 @@ export default function LabelRow({ sound, showBreadcrumb = true, onAddReference,
                               </span>
                               {getDomainName(ref.url)}
                             </button>
-                            <button
-                              onClick={() => handleDelete(ref)}
-                              className="p-1 rounded hover:bg-red-500/10 text-ink-faint hover:text-red-500 transition-colors"
-                              title="Delete reference"
-                            >
-                              <X className="w-3 h-3" />
-                            </button>
+                            {canDelete && (
+                              <button
+                                onClick={() => handleDelete(ref)}
+                                className="p-1 rounded hover:bg-red-500/10 text-ink-faint hover:text-red-500 transition-colors"
+                                title="Delete reference"
+                              >
+                                <X className="w-3 h-3" />
+                              </button>
+                            )}
                           </div>
                           {isPlaying && ytId && (
                             <div className="relative w-full max-w-md aspect-video rounded-lg overflow-hidden border border-line shadow-[var(--shadow-card)]">
