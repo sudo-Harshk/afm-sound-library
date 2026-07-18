@@ -14,7 +14,8 @@ const HelpTour = lazy(() => import('./components/HelpTour'));
 import { searchSounds, removeReferenceByUrl, hasReferenceUrl } from './lib/refs';
 import { useTheme } from './lib/useTheme';
 import { useSidebarWidth } from './lib/useSidebarWidth';
-import { toTitleCase } from './lib/format';
+import { toTitleCase, normalize } from './lib/format';
+import { getLabelOrder } from './lib/labelOrder';
 
 const SECTION_ORDER = [
   'Human vocal and speech sounds',
@@ -23,7 +24,7 @@ const SECTION_ORDER = [
   'Baby and infant sounds',
   'Animal sounds',
   'Liquid and fluid sounds',
-  'Social and Crowd',
+  'Social and crowd sounds',
   'Nature and environmental sounds',
   'Impact and collision sounds',
   'Friction and texture sounds',
@@ -32,7 +33,7 @@ const SECTION_ORDER = [
   'Air and Pressure sounds',
   'Electronic, alert, and interface sounds',
   'Music and tonal sounds',
-  'Food Preparation - Cooking Sounds',
+  'Food preparation and cooking sounds',
   'Transportation and Vehicle Sounds',
   'Construction and Tool Sounds',
   'Common confusable sound pairs',
@@ -91,13 +92,24 @@ export default function App() {
   }, [query]);
 
   const categories = useMemo(() => {
-    const counts = new Map();
+    const byNormalized = new Map();
     for (const s of sounds) {
       if (!s.section) continue;
-      counts.set(s.section, (counts.get(s.section) || 0) + 1);
+      const key = normalize(s.section);
+      if (!byNormalized.has(key)) {
+        byNormalized.set(key, { displayName: s.section, count: 0 });
+      }
+      byNormalized.get(key).count++;
     }
-    const ordered = SECTION_ORDER.filter((name) => counts.has(name)).map((name) => ({ name, count: counts.get(name) }));
-    const extras = [...counts.keys()].filter((name) => !SECTION_ORDER.includes(name)).map((name) => ({ name, count: counts.get(name) }));
+    const ordered = SECTION_ORDER
+      .filter((name) => byNormalized.has(normalize(name)))
+      .map((name) => {
+        const entry = byNormalized.get(normalize(name));
+        return { name: entry.displayName, count: entry.count };
+      });
+    const extras = [...byNormalized.entries()]
+      .filter(([key]) => !SECTION_ORDER.some((s) => normalize(s) === key))
+      .map(([, entry]) => ({ name: entry.displayName, count: entry.count }));
     return [...ordered, ...extras];
   }, [sounds]);
 
@@ -105,9 +117,19 @@ export default function App() {
 
   const categorySounds = useMemo(() => {
     if (!activeCategory) return [];
-    return sounds
-      .filter((s) => s.section === activeCategory)
-      .sort((a, b) => (a.subcategory || '').localeCompare(b.subcategory || '') || a.canonicalLabel.localeCompare(b.canonicalLabel));
+    const filtered = sounds.filter((s) => s.section === activeCategory);
+    const order = getLabelOrder(activeCategory);
+    if (order) {
+      const indexMap = new Map(order.map((label, i) => [label.toLowerCase(), i]));
+      return [...filtered].sort((a, b) => {
+        const ai = indexMap.get(a.canonicalLabel.toLowerCase());
+        const bi = indexMap.get(b.canonicalLabel.toLowerCase());
+        const aVal = ai !== undefined ? ai : order.length;
+        const bVal = bi !== undefined ? bi : order.length;
+        return aVal - bVal || a.canonicalLabel.localeCompare(b.canonicalLabel);
+      });
+    }
+    return [...filtered].sort((a, b) => (a.subcategory || '').localeCompare(b.subcategory || '') || a.canonicalLabel.localeCompare(b.canonicalLabel));
   }, [sounds, activeCategory]);
 
   const handleAddReference = useCallback(async (soundId, url) => {
@@ -238,8 +260,10 @@ export default function App() {
               </div>
             </div>
             <DataTable
+              key={activeCategory ?? (isSearching ? 'search' : 'all')}
               sounds={isSearching ? searchResults : activeCategory ? categorySounds : sounds}
               onRowClick={(sound) => setSelectedSound(sound)}
+              preserveOrder={!!(activeCategory && getLabelOrder(activeCategory))}
             />
         </main>
       </div>

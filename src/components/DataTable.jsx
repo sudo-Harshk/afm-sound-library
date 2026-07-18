@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 
 const COLUMNS = [
   { key: 'canonicalLabel', label: 'Canonical Label', sortable: true },
@@ -28,13 +28,15 @@ function getPageItems(page, totalPages) {
   return items;
 }
 
-export default function DataTable({ sounds, onRowClick }) {
+export default function DataTable({ sounds, onRowClick, preserveOrder = false }) {
   const [sortKey, setSortKey] = useState('canonicalLabel');
   const [sortDir, setSortDir] = useState('asc');
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
+  const [userSorted, setUserSorted] = useState(false);
 
   const handleSort = (key) => {
+    setUserSorted(true);
     if (!key) return;
     if (sortKey === key) {
       setSortDir(sortDir === 'asc' ? 'desc' : 'asc');
@@ -45,13 +47,16 @@ export default function DataTable({ sounds, onRowClick }) {
     setPage(0);
   };
 
-  const sorted = [...sounds].sort((a, b) => {
-    const aVal = (a[sortKey] || '').toLowerCase();
-    const bVal = (b[sortKey] || '').toLowerCase();
-    if (aVal < bVal) return sortDir === 'asc' ? -1 : 1;
-    if (aVal > bVal) return sortDir === 'asc' ? 1 : -1;
-    return 0;
-  });
+  const sorted = useMemo(() => {
+    if (preserveOrder && !userSorted) return sounds;
+    return [...sounds].sort((a, b) => {
+      const aVal = (a[sortKey] || '').toLowerCase();
+      const bVal = (b[sortKey] || '').toLowerCase();
+      if (aVal < bVal) return sortDir === 'asc' ? -1 : 1;
+      if (aVal > bVal) return sortDir === 'asc' ? 1 : -1;
+      return 0;
+    });
+  }, [sounds, sortKey, sortDir, preserveOrder, userSorted]);
 
   const totalPages = Math.ceil(sorted.length / pageSize);
   const paged = sorted.slice(page * pageSize, (page + 1) * pageSize);
@@ -73,14 +78,14 @@ export default function DataTable({ sounds, onRowClick }) {
               {COLUMNS.map((col) => (
                 <th
                   key={col.key}
-                  onClick={() => col.sortable && handleSort(col.key)}
+                  onClick={() => col.sortable && !(preserveOrder && col.key === 'canonicalLabel') && handleSort(col.key)}
                   className={`px-6 py-3 text-[11px] font-semibold uppercase tracking-wider border-b border-line ${
-                    col.sortable ? 'cursor-pointer select-none hover:text-accent' : ''
+                    col.sortable && !(preserveOrder && col.key === 'canonicalLabel') ? 'cursor-pointer select-none hover:text-accent' : ''
                   } text-ink-faint`}
                 >
                   <span className="inline-flex items-center gap-1">
                     {col.label}
-                    {col.sortable && sortKey === col.key && (
+                    {col.sortable && !(preserveOrder && col.key === 'canonicalLabel') && sortKey === col.key && (
                       <span className="material-symbols-outlined text-[14px]">
                         {sortDir === 'asc' ? 'arrow_upward' : 'arrow_downward'}
                       </span>
