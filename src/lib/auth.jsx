@@ -1,5 +1,4 @@
-import { useState, useEffect, createContext, useContext } from 'react';
-import { getAuth, onAuthStateChanged, signInWithPopup, signInWithEmailAndPassword, GoogleAuthProvider, signOut as firebaseSignOut } from 'firebase/auth';
+import { useState, useEffect, createContext, useContext, useRef } from 'react';
 
 const AuthContext = createContext(null);
 
@@ -7,6 +6,8 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [admin, setAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
+  const moduleRef = useRef(null);
+  const unsubRef = useRef(null);
 
   useEffect(() => {
     if (import.meta.env.VITE_DEMO_MODE === 'true') {
@@ -14,30 +15,66 @@ export function AuthProvider({ children }) {
       return;
     }
 
-    const auth = getAuth();
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      setUser(firebaseUser);
-      if (firebaseUser) {
-        const tokenResult = await firebaseUser.getIdTokenResult(true);
-        setAdmin(!!tokenResult.claims.admin);
-      } else {
-        setAdmin(false);
-      }
+    let cancelled = false;
+
+    const hasSignal =
+      new URLSearchParams(window.location.search).get('admin') === 'true' ||
+      !!localStorage.getItem('hadAdminSession');
+
+    if (!hasSignal) {
       setLoading(false);
-    });
-    return () => unsubscribe();
+      return () => {};
+    }
+
+    (async () => {
+      try {
+        const authModule = await import('firebase/auth');
+        if (cancelled) return;
+        moduleRef.current = authModule;
+
+        const auth = authModule.getAuth();
+        unsubRef.current = authModule.onAuthStateChanged(auth, async (firebaseUser) => {
+          if (cancelled) return;
+          setUser(firebaseUser);
+          if (firebaseUser) {
+            const tokenResult = await firebaseUser.getIdTokenResult(true);
+            if (!cancelled) setAdmin(!!tokenResult.claims.admin);
+          } else {
+            setAdmin(false);
+          }
+          if (!cancelled) setLoading(false);
+        });
+      } catch (err) {
+        console.error('Failed to load firebase/auth:', err);
+        if (!cancelled) setLoading(false);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+      unsubRef.current?.();
+    };
   }, []);
 
   const signInWithGoogle = () => {
+    const { getAuth, signInWithPopup, GoogleAuthProvider } = moduleRef.current;
     const provider = new GoogleAuthProvider();
-    return signInWithPopup(getAuth(), provider);
+    return signInWithPopup(getAuth(), provider).then((result) => {
+      localStorage.setItem('hadAdminSession', 'true');
+      return result;
+    });
   };
 
   const signInWithEmail = (email, password) => {
-    return signInWithEmailAndPassword(getAuth(), email, password);
+    const { getAuth, signInWithEmailAndPassword } = moduleRef.current;
+    return signInWithEmailAndPassword(getAuth(), email, password).then((result) => {
+      localStorage.setItem('hadAdminSession', 'true');
+      return result;
+    });
   };
 
   const signOut = () => {
+    const { getAuth, signOut: firebaseSignOut } = moduleRef.current;
     return firebaseSignOut(getAuth());
   };
 

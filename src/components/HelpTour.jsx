@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { features } from '../lib/config';
 
 const SEARCH_QUERY = 'Applause';
 
@@ -19,12 +20,14 @@ const externalSteps = [
     title: 'Reference Documents',
     content: 'The complete sound taxonomy and Q&A reference are here.',
     placement: 'bottom',
+    requiresFeature: 'showDocs',
   },
   {
     target: '[data-tour="tracker"]',
     title: 'Annotation Tracker',
     content: 'Track your annotation progress here.',
     placement: 'bottom',
+    requiresFeature: 'showTracker',
   },
   {
     target: '[data-tour="search"]',
@@ -86,8 +89,12 @@ const finishStep = {
   placement: 'center',
 };
 
-const allSteps = [...externalSteps, ...panelSteps, finishStep];
-const PANEL_START = externalSteps.length;
+const externalStepsFiltered = externalSteps.filter(
+  (s) => !s.requiresFeature || features[s.requiresFeature]
+);
+
+const allSteps = [...externalStepsFiltered, ...panelSteps, finishStep];
+const PANEL_START = externalStepsFiltered.length;
 const PANEL_END = PANEL_START + panelSteps.length;
 const PANEL_ANIM_MS = 350;
 

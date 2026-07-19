@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { useAuth } from '../lib/auth';
 
 export default function AnimatedAuthButton({ variant = 'desktop', isLoggedIn, isAdmin, onLogin, onLogout }) {
   const [pending, setPending] = useState(false);
+  const { loading } = useAuth();
   const prefersReduced = useReducedMotion();
 
   const handleLogout = async () => {
@@ -45,9 +47,10 @@ export default function AnimatedAuthButton({ variant = 'desktop', isLoggedIn, is
             exit={exit}
             transition={transition}
             onClick={onLogin}
+            disabled={loading}
             aria-label="Admin login"
             title="Admin login"
-            className="shrink-0 w-9 h-9 rounded-full border border-line bg-paper flex items-center justify-center text-ink-faint hover:text-accent hover:border-accent/50 transition-colors duration-150"
+            className="shrink-0 w-9 h-9 rounded-full border border-line bg-paper flex items-center justify-center text-ink-faint hover:text-accent hover:border-accent/50 transition-colors duration-150 disabled:opacity-50"
           >
             <span className="material-symbols-outlined text-[16px]">login</span>
           </motion.button>
@@ -81,8 +84,9 @@ export default function AnimatedAuthButton({ variant = 'desktop', isLoggedIn, is
           exit={exit}
           transition={transition}
           onClick={onLogin}
+          disabled={loading}
           aria-label="Admin login"
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-line text-[13px] text-ink-faint hover:text-accent hover:border-accent/50 transition-colors"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-line text-[13px] text-ink-faint hover:text-accent hover:border-accent/50 transition-colors disabled:opacity-50"
         >
           <span className="material-symbols-outlined text-[16px]">login</span>
           Login

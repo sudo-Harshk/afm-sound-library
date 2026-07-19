@@ -30,7 +30,6 @@ First-time desktop users can click Help in the top bar for a guided tour: it wal
 The app supports a demo mode controlled by the `VITE_DEMO_MODE` environment variable. When set to `true`, the following features are hidden:
 
 - Docs and Tracker buttons
-- Help tour
 - Reference add/delete buttons
 - Admin login
 
@@ -38,7 +37,7 @@ This is used for the dev site (`afm-sound-library-dev.web.app`) which serves as 
 
 ### Admin access
 
-Reference management (adding and deleting links) is restricted to authenticated admin users. The login button is hidden by default on production and only appears when visiting the site with `?admin=true` in the URL (e.g. `https://afm-sound-library.web.app/?admin=true`). Once signed in, the button shows "Admin ✓" with an accent style to indicate the active session.
+Reference management (adding and deleting links) is restricted to authenticated admin users. The login button is hidden by default on production and only appears when visiting the site with `?admin=true` in the URL (e.g. `https://afm-sound-library.web.app/?admin=true`). Once signed in, the button switches to a logout state with an accent style to indicate the active session.
 
 ## Tech stack
 
@@ -154,7 +153,7 @@ The app uses Firebase's multi-project setup. `.firebaserc` defines two targets:
 npm run deploy
 ```
 
-Builds with `VITE_DEMO_MODE=false` (from `.env`) and deploys to `afm-sound-library.web.app`. Full features: Docs, Tracker, Help tour, and admin delete buttons are available.
+Builds with `VITE_DEMO_MODE=false` (from `.env`) and deploys to `afm-sound-library.web.app`. Full features: Docs, Tracker, and admin delete buttons are available.
 
 ### Dev/demo site
 
