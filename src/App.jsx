@@ -301,7 +301,7 @@ export default function App() {
       {/* Help tour */}
       {showTour && (
         <Suspense fallback={null}>
-          <HelpTour onClose={() => setShowTour(false)} sounds={sounds} setSelectedSound={setSelectedSound} onQueryChange={setQuery} />
+          <HelpTour onClose={() => setShowTour(false)} sounds={sounds} setSelectedSound={setSelectedSound} onQueryChange={setQuery} admin={admin} />
         </Suspense>
       )}
 

@@ -227,6 +227,7 @@ export default function DetailPanel({ sound, onClose, onAddReference, onDeleteRe
             </div>
 
             {/* Add reference form */}
+            {canDelete && (
             <div data-tour="detail-addref" className="pt-4 border-t border-line">
               {adding ? (
                 <form onSubmit={submitReference} className="space-y-2">
@@ -267,6 +268,7 @@ export default function DetailPanel({ sound, onClose, onAddReference, onDeleteRe
                 </button>
               )}
             </div>
+            )}
           </div>
         </div>
       </div>

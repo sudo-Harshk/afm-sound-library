@@ -241,6 +241,7 @@ export default function SoundCardFace({ sound, isFront, onAddReference, onDelete
             })()}
           </div>
 
+          {canDelete && (
           <div className="shrink-0 pt-3 border-t border-line mt-3">
             {adding ? (
               <form onSubmit={submitReference} className="flex items-center gap-2">
@@ -274,6 +275,7 @@ export default function SoundCardFace({ sound, isFront, onAddReference, onDelete
             )}
             {error && <p className="text-xs text-red-500 pt-1">{error}</p>}
           </div>
+          )}
         </div>
       )}
     </div>

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { features } from '../lib/config';
 
 const SEARCH_QUERY = 'Applause';
@@ -44,7 +44,7 @@ const externalSteps = [
   },
 ];
 
-const panelSteps = [
+const panelStepsRaw = [
   {
     target: '[data-tour="detail-panel"]',
     title: 'Detail Panel',
@@ -80,6 +80,7 @@ const panelSteps = [
     title: 'Add Reference',
     content: 'Found a YouTube or Pixabay link? Add it here to help others.',
     placement: 'left',
+    requiresAdmin: true,
   },
 ];
 
@@ -93,12 +94,10 @@ const externalStepsFiltered = externalSteps.filter(
   (s) => !s.requiresFeature || features[s.requiresFeature]
 );
 
-const allSteps = [...externalStepsFiltered, ...panelSteps, finishStep];
 const PANEL_START = externalStepsFiltered.length;
-const PANEL_END = PANEL_START + panelSteps.length;
 const PANEL_ANIM_MS = 350;
 
-export default function HelpTour({ onClose, sounds, setSelectedSound, onQueryChange }) {
+export default function HelpTour({ onClose, sounds, setSelectedSound, onQueryChange, admin }) {
   const [step, setStep] = useState(0);
   const [spotlight, setSpotlight] = useState(null);
   const [tooltipStyle, setTooltipStyle] = useState({
@@ -112,10 +111,23 @@ export default function HelpTour({ onClose, sounds, setSelectedSound, onQueryCha
   const timersRef = useRef([]);
   const typeTimerRef = useRef(null);
 
-  const current = allSteps[step];
-  const prevStep = prevStepRef.current;
+  const panelStepsFiltered = useMemo(
+    () => panelStepsRaw.filter((s) => !s.requiresAdmin || admin),
+    [admin]
+  );
 
-  const isPanelStep = step >= PANEL_START && step < PANEL_END;
+  const allSteps = useMemo(
+    () => [...externalStepsFiltered, ...panelStepsFiltered, finishStep],
+    [panelStepsFiltered]
+  );
+
+  const PANEL_END = externalStepsFiltered.length + panelStepsFiltered.length;
+
+  const prevStep = prevStepRef.current;
+  const safeStep = Math.min(step, allSteps.length - 1);
+  const current = allSteps[safeStep];
+
+  const isPanelStep = safeStep >= PANEL_START && safeStep < PANEL_END;
   const wasPanelStep = prevStep >= PANEL_START && prevStep < PANEL_END;
   const enteringPanel = isPanelStep && !wasPanelStep;
 
@@ -142,8 +154,8 @@ export default function HelpTour({ onClose, sounds, setSelectedSound, onQueryCha
     if (!isPanelStep && wasPanelStep) {
       setSelectedSound(null);
     }
-    prevStepRef.current = step;
-  }, [step, isPanelStep, wasPanelStep, enteringPanel, sounds, setSelectedSound]);
+    prevStepRef.current = safeStep;
+  }, [safeStep, isPanelStep, wasPanelStep, enteringPanel, sounds, setSelectedSound]);
 
   useEffect(() => {
     if (current.action === 'typeSearch') {
@@ -302,15 +314,15 @@ export default function HelpTour({ onClose, sounds, setSelectedSound, onQueryCha
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  }, [step, handleClose]);
+  }, [safeStep, handleClose]);
 
   const next = () => {
-    if (step < allSteps.length - 1) setStep(step + 1);
+    if (safeStep < allSteps.length - 1) setStep(safeStep + 1);
     else handleClose();
   };
 
   const prev = () => {
-    if (step > 0) setStep(step - 1);
+    if (safeStep > 0) setStep(safeStep - 1);
   };
 
   return (
@@ -339,7 +351,7 @@ export default function HelpTour({ onClose, sounds, setSelectedSound, onQueryCha
 
         <div className="flex items-center justify-between">
           <span className="text-[11px] text-ink-faint tabular-nums">
-            {step + 1} of {allSteps.length}
+            {safeStep + 1} of {allSteps.length}
           </span>
           <div className="flex items-center gap-2">
             <button
@@ -348,7 +360,7 @@ export default function HelpTour({ onClose, sounds, setSelectedSound, onQueryCha
             >
               Skip
             </button>
-            {step > 0 && (
+            {safeStep > 0 && (
               <button
                 onClick={prev}
                 className="px-3 py-1.5 text-[12px] font-medium text-ink-soft hover:text-ink border border-line rounded-lg hover:bg-surface-container transition-colors"
@@ -360,7 +372,7 @@ export default function HelpTour({ onClose, sounds, setSelectedSound, onQueryCha
               onClick={next}
               className="px-4 py-1.5 text-[12px] font-medium text-on-primary bg-accent rounded-lg hover:opacity-90 transition-opacity"
             >
-              {step < allSteps.length - 1 ? 'Next' : 'Got it'}
+              {safeStep < allSteps.length - 1 ? 'Next' : 'Got it'}
             </button>
           </div>
         </div>

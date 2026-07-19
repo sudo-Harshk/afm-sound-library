@@ -148,6 +148,8 @@ export default function LabelRow({ sound, showBreadcrumb = true, onAddReference,
             ));
           })()}
 
+          {canDelete && (
+          <>
           {adding ? (
             <form onSubmit={submitReference} className="flex items-center gap-2 pt-1">
               <input
@@ -183,6 +185,8 @@ export default function LabelRow({ sound, showBreadcrumb = true, onAddReference,
             </button>
           )}
           {error && <p className="text-xs text-red-500">{error}</p>}
+          </>
+          )}
         </div>
       )}
     </div>
