@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { features } from '../lib/config';
+import AnimatedAuthButton from './AnimatedAuthButton';
 
 const RESOURCES = [
   { label: 'Sound Taxonomy', href: '/docs/Complete_Sound_Event_Taxonomy_v2_Revised.pdf' },
@@ -113,23 +114,13 @@ export default function TopBar({ query, onQueryChange, onHelpClick, user, admin,
         </button>
 
         {showAdmin && (
-          user ? (
-            <button
-              onClick={onLogout}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-[13px] transition-colors ${admin ? 'bg-accent-soft border-accent text-accent' : 'border-line text-ink-faint hover:text-accent hover:border-accent/50'}`}
-            >
-              <span className="material-symbols-outlined text-[16px]">logout</span>
-              {admin ? 'Admin ✓' : 'Admin'}
-            </button>
-          ) : (
-            <button
-              onClick={onLogin}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-line text-[13px] text-ink-faint hover:text-accent hover:border-accent/50 transition-colors"
-            >
-              <span className="material-symbols-outlined text-[16px]">login</span>
-              Admin
-            </button>
-          )
+          <AnimatedAuthButton
+            variant="desktop"
+            isLoggedIn={!!user}
+            isAdmin={admin}
+            onLogin={onLogin}
+            onLogout={onLogout}
+          />
         )}
       </div>
     </header>
