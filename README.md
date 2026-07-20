@@ -14,12 +14,12 @@ The catalog covers 18 sound categories (human, animal, environmental, mechanical
 
 The app renders two distinct layouts from the same state, split at the Tailwind `lg` breakpoint:
 
-- **Desktop** (`lg` and up): a fixed, drag-to-resize sidebar (200–480px, persisted to `localStorage`) lists categories with live counts; a sticky top bar holds the search input plus labeled buttons (Docs, a dropdown linking to the reference PDFs; Tracker, an external link to the annotation tracker; and Help, which launches a guided tour). The "N labels / N categories" summary sits just below, above the table. The main area is a sortable, paginated data table (10/25/50/100 rows per page, with a page window like `1 … 4 5 6 … 10` for large result sets) showing Canonical Label, Subcategory, and Description. Clicking a row opens a slide-in detail panel with the YouTube preview (if a reference is set), a metadata block (typical example, acoustic profile, confusable labels), the full taxonomy path, and the reference link list.
+- **Desktop** (`lg` and up): a fixed, drag-to-resize sidebar (200–480px, persisted to `localStorage`) lists categories with live counts; a sticky top bar holds the search input plus labeled buttons (Docs, a dropdown linking to the reference PDFs; Tracker, an external link to the annotation tracker; and Help, which launches a guided tour). The "X total labels across Y categories" summary sits just below, above the table. The main area is a sortable, paginated data table (10/25/50/100 rows per page, with a page window like `1 … 4 5 6 … 10` for large result sets) showing Canonical Label, Subcategory, and Description. Clicking a row opens a slide-in detail panel with the YouTube preview (if a reference is set), a metadata block (typical example, acoustic profile, confusable labels), the full taxonomy path, and the reference link list.
 - **Mobile** (below `lg`): a simpler stacked layout - search bar up top, then either a grid of category tiles or, once a category/search is active, results as a flat list (`LabelList`/`LabelRow`) or a draggable stack of cards (`CategoryDetail` + `card-stack.jsx`, drag up/down or use on-screen controls).
 
 Search does instant letter-by-letter filtering as you type, and the query is reflected in the URL (`?q=...`) so a search is shareable and survives a page refresh.
 
-Reference links render as clickable chips; YouTube links play inline (embedded player), other domains open in a new tab. Authenticated admin contributors can add or delete reference links.
+Reference links render as clickable chips; YouTube links play inline (embedded player), audio URLs (mp3, wav, ogg, m4a, flac) play inline via an `<audio>` element, and other domains open in a new tab. Authenticated admin contributors can add or delete reference links.
 
 The interface follows the system light/dark preference, with a manual override toggle (persisted to `localStorage`) in the sidebar (desktop) or top-right header button (mobile).
 
@@ -37,7 +37,7 @@ This is used for the dev site (`afm-sound-library-dev.web.app`) which serves as 
 
 ### Admin access
 
-Reference management (adding and deleting links) is restricted to authenticated admin users. The login button is hidden by default on production and only appears when visiting the site with `?admin=true` in the URL (e.g. `https://afm-sound-library.web.app/?admin=true`). Once signed in, the button switches to a logout state with an accent style to indicate the active session.
+Reference management (adding and deleting links) is restricted to authenticated admin users. The login button is hidden by default on production and only appears when visiting the site with `?admin=true` in the URL (e.g. `https://afm-sound-library.web.app/?admin=true`) or when a returning user already has an active session. Once signed in, the button crossfades to a Logout state with an accent style to indicate the active session. The admin login persists across sessions via `localStorage` so returning users do not need the `?admin=true` param again.
 
 ## Tech stack
 
@@ -45,9 +45,9 @@ Reference management (adding and deleting links) is restricted to authenticated 
 - Tailwind CSS v4 (via `@tailwindcss/vite`, no separate config file)
 - Firebase (Firestore for data, Authentication for admin access, Hosting for deployment)
 - Firebase Admin SDK (for setting admin custom claims via script)
-- Framer Motion, for the mobile draggable card stack
+- Framer Motion, for the mobile draggable card stack and the animated Login/Logout crossfade toggle (desktop + mobile)
 - lucide-react, for icons in the mobile layout
-- Material Symbols (Google Fonts, loaded in `index.html`), for icons in the desktop layout
+- Material Symbols (Google Fonts, loaded in `index.html`), for icons in the desktop and mobile layouts
 - Oxlint, for linting
 - Vitest, for unit tests
 
@@ -88,12 +88,12 @@ The app uses Vite environment variables prefixed with `VITE_`. Copy `.env.exampl
 | `VITE_FIREBASE_STORAGE_BUCKET` | Firebase Storage bucket |
 | `VITE_FIREBASE_MESSAGING_SENDER_ID` | Firebase Cloud Messaging sender ID |
 | `VITE_FIREBASE_APP_ID` | Firebase app ID |
-| `VITE_DEMO_MODE` | Set to `true` to enable demo mode (hides Docs, Tracker, delete buttons, admin login) |
+| `VITE_DEMO_MODE` | Set to `true` to enable demo mode (hides Docs, Tracker, add/delete reference buttons, admin login) |
 
 Two environment files are used:
 
-- `.env` — production config (`VITE_DEMO_MODE=false`), connects to the `afm-sound-library` project
-- `.env.development` — dev config (`VITE_DEMO_MODE=true`), connects to the `afm-sound-library-dev` project
+- `.env` — production config (`VITE_DEMO_MODE=false`), connects to the `afm-sound-library` Firestore project
+- `.env.development` — dev config (`VITE_DEMO_MODE=true`), connects to the same `afm-sound-library` Firestore project (the `afm-sound-library-dev` project is only the Hosting target, not a separate database)
 
 Both files are gitignored and must be created manually from `.env.example`.
 
@@ -107,9 +107,9 @@ cp .env.example .env   # fill in Firebase config values
 npm run dev
 ```
 
-This starts the Vite dev server and connects to the live Firestore project defined in `.env`. There is no local emulator configured, so writes made during local development (adding a reference) go to the real database.
+This starts the Vite dev server. Vite loads `.env` first, then `.env.development` overrides it (if present), so with both files present the dev server runs in demo mode and connects to the live Firestore project. There is no local emulator configured, so writes made during local development (adding a reference) go to the real database.
 
-To run in demo mode locally, set `VITE_DEMO_MODE=true` in your `.env` file, or use the development build:
+To run in demo mode locally, either ensure `.env.development` exists (it sets `VITE_DEMO_MODE=true` by default), set `VITE_DEMO_MODE=true` in your `.env` file, or use the development build:
 
 ```bash
 npm run build:dev   # builds with VITE_DEMO_MODE=true from .env.development
@@ -153,7 +153,7 @@ The app uses Firebase's multi-project setup. `.firebaserc` defines two targets:
 npm run deploy
 ```
 
-Builds with `VITE_DEMO_MODE=false` (from `.env`) and deploys to `afm-sound-library.web.app`. Full features: Docs, Tracker, and admin delete buttons are available.
+Builds with `VITE_DEMO_MODE=false` (from `.env`) and deploys to `afm-sound-library.web.app`. Full features: Docs, Tracker, and admin add/delete reference buttons are available.
 
 ### Dev/demo site
 
@@ -161,7 +161,7 @@ Builds with `VITE_DEMO_MODE=false` (from `.env`) and deploys to `afm-sound-libra
 npm run deploy:dev
 ```
 
-Builds with `VITE_DEMO_MODE=true` (from `.env.development`) and deploys to `afm-sound-library-dev.web.app`. Read-only demo: Docs, Tracker, delete buttons, and admin login are hidden.
+Builds with `VITE_DEMO_MODE=true` (from `.env.development`) and deploys to `afm-sound-library-dev.web.app`. Read-only demo: Docs, Tracker, reference add/delete buttons, and admin login are hidden.
 
 ### Firestore rules
 
@@ -210,7 +210,7 @@ The login button is hidden by default. Visit the site with `?admin=true` in the 
 https://afm-sound-library.web.app/?admin=true
 ```
 
-Once signed in, the button shows "Admin ✓" with an accent style. Sign out by clicking it again.
+Once signed in, the button crossfades to show a Logout icon and text. Sign out by clicking it again.
 
 ## Security note
 
