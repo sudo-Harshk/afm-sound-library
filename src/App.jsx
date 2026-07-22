@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useMemo, lazy, Suspense } from 'react';
+import { AnimatePresence } from 'framer-motion';
 import { collection, onSnapshot, updateDoc, doc, arrayUnion, getDoc } from 'firebase/firestore';
 import { db } from './firebase';
 import SearchBar from './components/SearchBar';
@@ -10,6 +11,7 @@ import TopBar from './components/TopBar';
 import DataTable from './components/DataTable';
 import Breadcrumb from './components/Breadcrumb';
 import DetailPanel from './components/DetailPanel';
+const ComparisonPanel = lazy(() => import('./components/ComparisonPanel'));
 const HelpTour = lazy(() => import('./components/HelpTour'));
 import { searchSounds, removeReferenceByUrl, hasReferenceUrl } from './lib/refs';
 import { useTheme } from './lib/useTheme';
@@ -57,6 +59,9 @@ export default function App() {
   const [selectedSound, setSelectedSound] = useState(null);
   const [showTour, setShowTour] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
+  const [compareMode, setCompareMode] = useState(false);
+  const [compareList, setCompareList] = useState([]);
+  const [showCompare, setShowCompare] = useState(false);
   const { user, admin, signOut } = useAuth();
   const canDelete = admin;
   const showAdminLogin = new URLSearchParams(window.location.search).get('admin') === 'true' || !!user;
@@ -67,10 +72,59 @@ export default function App() {
   }, []);
   const { theme, toggle: toggleTheme } = useTheme();
 
+  const toggleCompareMode = useCallback(() => {
+    setCompareMode((prev) => {
+      if (prev) {
+        setCompareList([]);
+        setShowCompare(false);
+      }
+      return !prev;
+    });
+  }, []);
+
+  const toggleCompareItem = useCallback((soundId) => {
+    setCompareList((prev) => {
+      if (prev.includes(soundId)) return prev.filter((id) => id !== soundId);
+      if (prev.length >= 2) return prev;
+      const next = [...prev, soundId];
+      if (next.length === 2) setShowCompare(true);
+      return next;
+    });
+  }, []);
+
+  const clearCompare = useCallback(() => {
+    setCompareMode(false);
+    setCompareList([]);
+    setShowCompare(false);
+  }, []);
+
+  useEffect(() => {
+    const handler = (e) => {
+      if (e.key === 'Escape') {
+        if (showCompare) {
+          clearCompare();
+        } else if (compareMode) {
+          toggleCompareMode();
+        }
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [showCompare, compareMode, clearCompare, toggleCompareMode]);
+
   useEffect(() => {
     if (selectedSound) {
       const updated = sounds.find((s) => s.id === selectedSound.id);
       if (updated) setSelectedSound(updated);
+    }
+    if (compareList.length > 0) {
+      const updatedList = compareList
+        .map((id) => sounds.find((s) => s.id === id))
+        .filter(Boolean);
+      if (updatedList.length !== compareList.length) {
+        setCompareList(updatedList.map((s) => s.id));
+        if (updatedList.length < 2) setShowCompare(false);
+      }
     }
   }, [sounds]);
   const { width: sidebarWidth, isDragging: isSidebarDragging, startDrag: startSidebarDrag, resetWidth: resetSidebarWidth } = useSidebarWidth();
@@ -251,7 +305,20 @@ export default function App() {
         className={`hidden lg:flex lg:flex-col lg:min-h-screen ${isSidebarDragging ? '' : 'transition-[margin-left] duration-100'}`}
         style={{ marginLeft: sidebarWidth }}
       >
-        <TopBar query={query} onQueryChange={setQuery} onHelpClick={() => setShowTour(true)} user={user} admin={admin} onLogin={() => setShowLogin(true)} onLogout={signOut} showAdmin={showAdminLogin} />
+        <TopBar
+          query={query}
+          onQueryChange={setQuery}
+          onHelpClick={() => setShowTour(true)}
+          user={user}
+          admin={admin}
+          onLogin={() => setShowLogin(true)}
+          onLogout={signOut}
+          showAdmin={showAdminLogin}
+          compareMode={compareMode}
+          compareCount={compareList.length}
+          onToggleCompare={toggleCompareMode}
+          soundsCount={isSearching ? searchResults.length : activeCategory ? categorySounds.length : sounds.length}
+        />
         <main className="flex-1 overflow-y-auto p-6">
             <Breadcrumb
               items={[
@@ -283,12 +350,15 @@ export default function App() {
               sounds={isSearching ? searchResults : activeCategory ? categorySounds : sounds}
               onRowClick={(sound) => setSelectedSound(sound)}
               preserveOrder={!!(activeCategory && getLabelOrder(activeCategory))}
+              compareMode={compareMode}
+              compareList={compareList}
+              onToggleCompare={toggleCompareItem}
             />
         </main>
       </div>
 
       {/* Detail panel */}
-      {selectedSound && (
+      {selectedSound && !showCompare && (
         <DetailPanel
           sound={selectedSound}
           onClose={() => setSelectedSound(null)}
@@ -297,6 +367,22 @@ export default function App() {
           canDelete={canDelete}
         />
       )}
+
+      {/* Comparison panel */}
+      <AnimatePresence>
+        {showCompare && compareList.length === 2 && (
+          <Suspense fallback={null}>
+            <ComparisonPanel
+              soundA={sounds.find((s) => s.id === compareList[0])}
+              soundB={sounds.find((s) => s.id === compareList[1])}
+              onClose={clearCompare}
+              onAddReference={handleAddReference}
+              onDeleteReference={handleDeleteReference}
+              canDelete={canDelete}
+            />
+          </Suspense>
+        )}
+      </AnimatePresence>
 
       {/* Help tour */}
       {showTour && (

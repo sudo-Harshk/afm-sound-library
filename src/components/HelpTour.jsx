@@ -30,6 +30,12 @@ const externalSteps = [
     requiresFeature: 'showTracker',
   },
   {
+    target: '[data-tour="compare"]',
+    title: 'Compare Sounds',
+    content: 'Select two sounds side by side to compare their references, metadata, and taxonomy.',
+    placement: 'bottom',
+  },
+  {
     target: '[data-tour="search"]',
     title: 'Search',
     content: 'Let\'s search for Applause.',

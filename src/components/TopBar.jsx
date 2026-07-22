@@ -7,7 +7,7 @@ const RESOURCES = [
   { label: 'Q&A Reference', href: '/docs/Consolidated_QA_from_Team_Discussion.pdf' },
 ];
 
-export default function TopBar({ query, onQueryChange, onHelpClick, user, admin, onLogin, onLogout, showAdmin }) {
+export default function TopBar({ query, onQueryChange, onHelpClick, user, admin, onLogin, onLogout, showAdmin, compareMode, compareCount, onToggleCompare, soundsCount }) {
   const inputRef = useRef(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
@@ -103,6 +103,21 @@ export default function TopBar({ query, onQueryChange, onHelpClick, user, admin,
             Tracker
           </a>
         )}
+
+        <button
+          onClick={onToggleCompare}
+          disabled={soundsCount < 2 && !compareMode}
+          title={compareMode ? 'Exit compare mode' : 'Compare sounds side by side'}
+          data-tour="compare"
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-[13px] transition-colors ${
+            compareMode
+              ? 'border-accent text-accent bg-accent-soft'
+              : 'border-line text-ink-faint hover:text-accent hover:border-accent/50'
+          } ${soundsCount < 2 && !compareMode ? 'opacity-50 cursor-not-allowed' : ''}`}
+        >
+          <span className="material-symbols-outlined text-[16px]">compare</span>
+          {compareMode ? `Compare (${compareCount})` : 'Compare'}
+        </button>
 
         <button
           onClick={onHelpClick}

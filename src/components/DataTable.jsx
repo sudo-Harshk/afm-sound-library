@@ -28,7 +28,7 @@ function getPageItems(page, totalPages) {
   return items;
 }
 
-export default function DataTable({ sounds, onRowClick, preserveOrder = false }) {
+export default function DataTable({ sounds, onRowClick, preserveOrder = false, compareMode = false, compareList = [], onToggleCompare }) {
   const [sortKey, setSortKey] = useState('canonicalLabel');
   const [sortDir, setSortDir] = useState('asc');
   const [page, setPage] = useState(0);
@@ -75,6 +75,11 @@ export default function DataTable({ sounds, onRowClick, preserveOrder = false })
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-surface-container-high">
+              {compareMode && (
+                <th className="w-12 px-4 py-3 border-b border-line">
+                  <span className="sr-only">Select to compare</span>
+                </th>
+              )}
               {COLUMNS.map((col) => (
                 <th
                   key={col.key}
@@ -96,26 +101,42 @@ export default function DataTable({ sounds, onRowClick, preserveOrder = false })
             </tr>
           </thead>
           <tbody className="divide-y divide-line">
-            {paged.map((sound) => (
-              <tr
-                key={sound.id}
-                onClick={() => onRowClick?.(sound)}
-                className="hover:bg-surface-container-low transition-colors cursor-pointer"
-              >
-                <td className="px-6 py-4 text-[13px] font-semibold text-ink">{sound.canonicalLabel}</td>
-                <td className="px-6 py-4 text-[13px] text-ink-soft">{sound.subcategory || '—'}</td>
-                <td className="px-6 py-4 text-[13px] text-ink-soft max-w-[420px] truncate">{sound.description || '—'}</td>
-              </tr>
-            ))}
+            {paged.map((sound) => {
+              const isChecked = compareList.includes(sound.id);
+              const isDisabled = compareMode && compareList.length >= 2 && !isChecked;
+              return (
+                <tr
+                  key={sound.id}
+                  onClick={() => !compareMode && onRowClick?.(sound)}
+                  className={`transition-colors ${compareMode ? 'cursor-default' : 'hover:bg-surface-container-low cursor-pointer'}`}
+                >
+                  {compareMode && (
+                    <td className="px-4 py-4 w-12">
+                      <input
+                        type="checkbox"
+                        checked={isChecked}
+                        disabled={isDisabled}
+                        onChange={() => onToggleCompare?.(sound.id)}
+                        onClick={(e) => e.stopPropagation()}
+                        className={`w-4 h-4 rounded border-line accent-accent ${isDisabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                      />
+                    </td>
+                  )}
+                  <td className="px-6 py-4 text-[13px] font-semibold text-ink">{sound.canonicalLabel}</td>
+                  <td className="px-6 py-4 text-[13px] text-ink-soft">{sound.subcategory || '—'}</td>
+                  <td className="px-6 py-4 text-[13px] text-ink-soft max-w-[420px] truncate">{sound.description || '—'}</td>
+                </tr>
+              );
+            })}
             {fillerCount > 0 &&
               Array.from({ length: fillerCount }, (_, i) => (
                 <tr key={`filler-${i}`} aria-hidden="true" style={{ borderColor: 'transparent' }}>
-                  <td className="px-6 py-4" colSpan={3}>&nbsp;</td>
+                  <td className="px-6 py-4" colSpan={compareMode ? 4 : 3}>&nbsp;</td>
                 </tr>
               ))}
             {paged.length === 0 && (
               <tr>
-                <td colSpan={3} className="px-6 py-12 text-center text-[13px] text-ink-faint">
+                <td colSpan={compareMode ? 4 : 3} className="px-6 py-12 text-center text-[13px] text-ink-faint">
                   No sounds found.
                 </td>
               </tr>
